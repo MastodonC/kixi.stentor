@@ -88,9 +88,8 @@
   modular.http-kit/RingHandlerProvider
   (handler [this]
     (assert (:routes-contributors this) "No :routes-contributors found")
-    (let [routes ["" (mapv (fn [c] [(or (modular.bidi/context c) "") [(modular.bidi/routes c)]])
+    (let [routes ["" (mapv #(vector (or (modular.bidi/context %) "") [(modular.bidi/routes %)])
                            (:routes-contributors this))]]
-
       (-> routes
           bidi/make-handler
           (wrap-routes routes)))))
