@@ -17,12 +17,10 @@
 (defrecord Menu []
   component/Lifecycle
   (start [this]
-    (println "menuitems is " (:menuitems this))
     (update-in this [:menuitems]
                (partial map attributes))
     )
   (stop [this]
-    (println "Stopping menu")
     this))
 
 (defn new-menu []
@@ -32,10 +30,8 @@
 (defrecord AboutMenuitem [label]
   component/Lifecycle
   (start [this]
-    (println "Starting menuitem")
     this)
   (stop [this]
-    (println "Stopping menuitem")
     this)
   Menuitem
   (attributes [this]
