@@ -1,4 +1,4 @@
-(ns jigdep.core
+(ns kixi.stentor.core
   (:require
    [com.stuartsierra.component :as component]))
 
@@ -39,34 +39,7 @@
     )
   )
 
-(defn resolve-contributors [m k p]
-  (reduce-kv
-   (fn [s _ v]
-     (if (satisfies? p v)
-       (update-in s [k] conj v)
-       s
-       ))
-   m m))
 
-(defn configure [m config]
-  (reduce-kv
-   (fn [s k v]
-     (let [cfg (k config)]
-       (cond-> s cfg (assoc-in [k :config] cfg))))
-   m m))
 
 ;; Above this line, no coupling
 ;; ---------------------------------------------------------
-
-(defn system []
-  (-> (component/system-map
-       :menu (new-menu)
-       :about (new AboutMenuitem "About")
-       :about2 (new AboutMenuitem "About2")
-       :database (new-database))
-      (configure {:database {:keyspace "test"}})
-      (resolve-contributors :menuitems Menuitem)
-      (component/system-using
-       {:menu [:menuitems :database]})))
-
-(prn (-> (component/start (system))))
