@@ -7,8 +7,7 @@
 
 (defrecord Database []
   component/Lifecycle
-  (start [this]
-    this)
+  (start [this] this)
   (stop [this] this)
 )
 
@@ -53,24 +52,25 @@
        ))
    m m))
 
+(defn configure [m config]
+  (reduce-kv
+   (fn [s k v]
+     (let [cfg (k config)]
+       (cond-> s cfg (assoc-in [k :config] cfg))))
+   m m))
 
 ;; Above this line, no coupling
 ;; ---------------------------------------------------------
 
-(defn new-system []
+(defn system []
   (-> (component/system-map
        :menu (new-menu)
        :about (new AboutMenuitem "About")
        :about2 (new AboutMenuitem "About2")
-       :database (new-database)
-       :toolbar (new-menu)
-       )
+       :database (new-database))
+      (configure {:database {:keyspace "test"}})
       (resolve-contributors :menuitems Menuitem)
       (component/system-using
-       {:menu [:menuitems :database]
-        :toolbar [:menuitems]})))
+       {:menu [:menuitems :database]})))
 
-
-(prn (-> (component/start (new-system))))
-
-;;(clojure.pprint/pprint (new-system))
+(prn (-> (component/start (system))))
