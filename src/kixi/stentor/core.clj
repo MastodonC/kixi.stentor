@@ -67,12 +67,13 @@
 (defn make-routes [handlers]
   ["/index.html" (:index handlers)])
 
-(defrecord BidiRoutes []
+(defrecord BidiRoutes [context]
   component/Lifecycle
   (start [this] this)
   (stop [this] this)
   modular.bidi/RoutesContributor
-  (routes [this] (make-routes (make-handlers))))
+  (routes [this] (make-routes (make-handlers)))
+  (context [this] context))
 
 (defn wrap-routes
   "Add the final set of routes from which the Ring handler is built."
@@ -86,14 +87,18 @@
   (stop [this] this)
   modular.http-kit/RingHandlerProvider
   (handler [this]
-    (assert (:routes this) "No :routes found")
-    (let [routes (modular.bidi/routes (:routes this))]
+    (assert (:routes-contributors this) "No :routes found")
+
+    (let [routes #spy/d ["" (vec
+                      (for [contributor (:routes-contributors this)]
+                        [(or (modular.bidi/context contributor) "") [(modular.bidi/routes contributor)]]
+                        ))]]
       (-> routes
-       bidi/make-handler
-       (wrap-routes routes)))))
+          bidi/make-handler
+          (wrap-routes routes)))))
 
 (defn new-bidi-ring-handler-provider []
   (new BidiRingHandlerProvider))
 
 (defn new-main-routes []
-  (new BidiRoutes))
+  (new BidiRoutes "/bar"))
