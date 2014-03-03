@@ -1,10 +1,10 @@
 (ns kixi.stentor.system
   (:require
-   [kixi.stentor.core :refer (new-sub-routes new-bidi-ring-handler-provider new-main-routes new-hello new-webserver new-menu new-database ->AboutMenuitem Menuitem)]
+   [kixi.stentor.core :refer (new-sub-routes new-main-routes new-hello new-menu new-database ->AboutMenuitem Menuitem)]
    [com.stuartsierra.component :as component]
    [modular.core :as mod]
-   [modular.http-kit :refer (RingHandlerProvider)]
-   [modular.bidi :refer (RoutesContributor)]
+   [modular.http-kit :refer (RingHandlerProvider new-webserver)]
+   [modular.bidi :refer (RoutesContributor new-bidi-ring-handler-provider)]
    clojure.tools.reader
    [clojure.tools.reader.reader-types :refer (indexing-push-back-reader source-logging-push-back-reader)]
    [clojure.java.io :as io]))

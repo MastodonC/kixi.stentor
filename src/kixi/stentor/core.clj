@@ -1,7 +1,7 @@
 (ns kixi.stentor.core
   (:require
-   [modular.http-kit :refer (->Webserver)]
-   modular.bidi
+   [modular.http-kit :refer (new-webserver)]
+   [modular.bidi :refer (new-bidi-routes new-bidi-ring-handler-provider)]
    [bidi.bidi :as bidi]
    [com.stuartsierra.component :as component]))
 
@@ -52,9 +52,6 @@
 (defn new-hello []
   (new Hello))
 
-(defn new-webserver [{:keys [port]}]
-  (->Webserver port))
-
 (defn index [handlers-p]
   (fn [req]
     {:status 200 :body "Hello, this is the index!"}))
@@ -67,38 +64,8 @@
 (defn make-routes [handlers]
   ["/index.html" (:index handlers)])
 
-(defrecord BidiRoutes [context]
-  component/Lifecycle
-  (start [this] this)
-  (stop [this] this)
-  modular.bidi/RoutesContributor
-  (routes [this] (make-routes (make-handlers)))
-  (context [this] context))
-
-(defn wrap-routes
-  "Add the final set of routes from which the Ring handler is built."
-  [h routes]
-  (fn [req]
-    (h (assoc req :routes routes))))
-
-(defrecord BidiRingHandlerProvider []
-  component/Lifecycle
-  (start [this] this)
-  (stop [this] this)
-  modular.http-kit/RingHandlerProvider
-  (handler [this]
-    (assert (:routes-contributors this) "No :routes-contributors found")
-    (let [routes ["" (mapv #(vector (or (modular.bidi/context %) "") [(modular.bidi/routes %)])
-                           (:routes-contributors this))]]
-      (-> routes
-          bidi/make-handler
-          (wrap-routes routes)))))
-
-(defn new-bidi-ring-handler-provider []
-  (new BidiRingHandlerProvider))
-
 (defn new-main-routes []
-  (new BidiRoutes "/bar"))
+  (new-bidi-routes (make-routes (make-handlers)) "/bar"))
 
 (defn new-sub-routes []
-  (new BidiRoutes "/bar/foo"))
+  (new-bidi-routes (make-routes (make-handlers)) "/bar/foo"))
