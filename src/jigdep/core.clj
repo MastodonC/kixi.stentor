@@ -18,13 +18,10 @@
 (defrecord Menu []
   component/Lifecycle
   (start [this]
-    (println "Starting menu: " (vals this))
-    (reduce-kv
-     (fn [s k v]
-       (if (satisfies? Menuitem v)
-         (update-in s [:menuitems] conj (attributes v))
-         s))
-     this this))
+    (println "menuitems is " (:menuitems this))
+    (update-in this [:menuitems]
+               (partial map attributes))
+    )
   (stop [this]
     (println "Stopping menu")
     this))
@@ -33,7 +30,7 @@
   (new Menu)
 )
 
-(defrecord AboutMenuitem []
+(defrecord AboutMenuitem [label]
   component/Lifecycle
   (start [this]
     (println "Starting menuitem")
@@ -43,13 +40,19 @@
     this)
   Menuitem
   (attributes [this]
-    {:label "About..."}
+    {:label (str label "...")}
     )
   )
 
-(defn new-menuitem []
-  (new AboutMenuitem)
-)
+(defn resolve-contributors [m k p]
+  (reduce-kv
+   (fn [s _ v]
+     (if (satisfies? p v)
+       (update-in s [k] conj v)
+       s
+       ))
+   m m))
+
 
 ;; Above this line, no coupling
 ;; ---------------------------------------------------------
@@ -57,11 +60,17 @@
 (defn new-system []
   (-> (component/system-map
        :menu (new-menu)
-       :about (new-menuitem)
+       :about (new AboutMenuitem "About")
+       :about2 (new AboutMenuitem "About2")
        :database (new-database)
+       :toolbar (new-menu)
        )
+      (resolve-contributors :menuitems Menuitem)
       (component/system-using
-       {:menu [:about :database]})))
+       {:menu [:menuitems :database]
+        :toolbar [:menuitems]})))
 
 
-(println (-> (component/start (new-system)) :menu :menuitems))
+(prn (-> (component/start (new-system))))
+
+;;(clojure.pprint/pprint (new-system))
