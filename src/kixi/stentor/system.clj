@@ -3,6 +3,7 @@
    [kixi.stentor.core :refer (new-menu new-database ->AboutMenuitem Menuitem)]
    [com.stuartsierra.component :as component]
    [modular.core :as mod]
+   clojure.tools.reader
    [clojure.tools.reader.reader-types :refer (indexing-push-back-reader source-logging-push-back-reader)]
    [clojure.java.io :as io]))
 
@@ -13,7 +14,7 @@
        (indexing-push-back-reader
         (java.io.PushbackReader. (io/reader f)))))))
 
-(defn system []
+(defn new-system []
   (-> (component/system-map
        :menu (new-menu)
        :about (->AboutMenuitem "About")
@@ -24,4 +25,4 @@
       (component/system-using
        {:menu [:menuitems :database]})))
 
-(prn (-> (component/start (system))))
+;;(prn (-> (component/start (system))))
