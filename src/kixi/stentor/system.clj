@@ -1,8 +1,9 @@
 (ns kixi.stentor.system
   (:require
-   [kixi.stentor.core :refer (new-menu new-database ->AboutMenuitem Menuitem)]
+   [kixi.stentor.core :refer (new-hello new-webserver new-menu new-database ->AboutMenuitem Menuitem)]
    [com.stuartsierra.component :as component]
    [modular.core :as mod]
+   [modular.http-kit :refer (RingHandlerProvider)]
    clojure.tools.reader
    [clojure.tools.reader.reader-types :refer (indexing-push-back-reader source-logging-push-back-reader)]
    [clojure.java.io :as io]))
@@ -15,14 +16,18 @@
         (java.io.PushbackReader. (io/reader f)))))))
 
 (defn new-system []
-  (-> (component/system-map
-       :menu (new-menu)
-       :about (->AboutMenuitem "About")
-       :about2 (->AboutMenuitem "About2")
-       :database (new-database))
-      (mod/configure (config))
-      (mod/resolve-contributors :menuitems Menuitem)
-      (component/system-using
-       {:menu [:menuitems :database]})))
+  (let [cfg (config)]
+    (-> (component/system-map
+         :webserver (new-webserver (:webserver cfg))
+         :ring-handler (new-hello)
+         :menu (new-menu)
+         :about (->AboutMenuitem "About")
+         :about2 (->AboutMenuitem "About2")
+         :database (new-database))
+        (mod/resolve-contributors :menuitems Menuitem)
+        (mod/resolve-contributors :ring-handler-provider RingHandlerProvider :cardinality 1)
+        (component/system-using
+         {:menu [:menuitems :database]
+          :webserver [:ring-handler-provider]}))))
 
 ;;(prn (-> (component/start (system))))

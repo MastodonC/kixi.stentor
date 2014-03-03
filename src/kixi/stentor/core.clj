@@ -1,5 +1,6 @@
 (ns kixi.stentor.core
   (:require
+   [modular.http-kit :refer (->Webserver)]
    [com.stuartsierra.component :as component]))
 
 (defprotocol Menuitem
@@ -38,6 +39,19 @@
     {:label (str label "...")}
     )
   )
+
+(defrecord Hello []
+  component/Lifecycle
+  (start [this] this)
+  (stop [this] this)
+  modular.http-kit/RingHandlerProvider
+  (handler [this] (fn [req] {:status 200 :body "Hello Neale!!!!!!!!!"})))
+
+(defn new-hello []
+  (new Hello))
+
+(defn new-webserver [{:keys [port]}]
+  (->Webserver port))
 
 
 
