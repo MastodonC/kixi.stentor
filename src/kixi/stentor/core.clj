@@ -87,12 +87,10 @@
   (stop [this] this)
   modular.http-kit/RingHandlerProvider
   (handler [this]
-    (assert (:routes-contributors this) "No :routes found")
+    (assert (:routes-contributors this) "No :routes-contributors found")
+    (let [routes ["" (mapv (fn [c] [(or (modular.bidi/context c) "") [(modular.bidi/routes c)]])
+                           (:routes-contributors this))]]
 
-    (let [routes #spy/d ["" (vec
-                      (for [contributor (:routes-contributors this)]
-                        [(or (modular.bidi/context contributor) "") [(modular.bidi/routes contributor)]]
-                        ))]]
       (-> routes
           bidi/make-handler
           (wrap-routes routes)))))
@@ -102,3 +100,6 @@
 
 (defn new-main-routes []
   (new BidiRoutes "/bar"))
+
+(defn new-sub-routes []
+  (new BidiRoutes "/bar/foo"))
