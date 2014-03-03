@@ -1,6 +1,8 @@
 (ns kixi.stentor.core
   (:require
    [modular.http-kit :refer (->Webserver)]
+   modular.bidi
+   [bidi.bidi :as bidi]
    [com.stuartsierra.component :as component]))
 
 (defprotocol Menuitem
@@ -53,7 +55,45 @@
 (defn new-webserver [{:keys [port]}]
   (->Webserver port))
 
+(defn index [handlers-p]
+  (fn [req]
+    {:status 200 :body "Hello, this is the index!"}))
 
+(defn make-handlers []
+  (let [p (promise)]
+    @(deliver p
+              {:index (index p)})))
 
-;; Above this line, no coupling
-;; ---------------------------------------------------------
+(defn make-routes [handlers]
+  ["/index.html" (:index handlers)])
+
+(defrecord BidiRoutes []
+  component/Lifecycle
+  (start [this] this)
+  (stop [this] this)
+  modular.bidi/RoutesContributor
+  (routes [this] (make-routes (make-handlers))))
+
+(defn wrap-routes
+  "Add the final set of routes from which the Ring handler is built."
+  [h routes]
+  (fn [req]
+    (h (assoc req :routes routes))))
+
+(defrecord BidiRingHandlerProvider []
+  component/Lifecycle
+  (start [this] this)
+  (stop [this] this)
+  modular.http-kit/RingHandlerProvider
+  (handler [this]
+    (assert (:routes this) "No :routes found")
+    (let [routes (modular.bidi/routes (:routes this))]
+      (-> routes
+       bidi/make-handler
+       (wrap-routes routes)))))
+
+(defn new-bidi-ring-handler-provider []
+  (new BidiRingHandlerProvider))
+
+(defn new-main-routes []
+  (new BidiRoutes))
