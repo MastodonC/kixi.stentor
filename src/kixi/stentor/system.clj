@@ -1,10 +1,18 @@
 (ns kixi.stentor.system
   (:require
-   [kixi.stentor.core :refer (new-sub-routes new-main-routes new-menu new-database ->AboutMenuitem Menuitem)]
    [com.stuartsierra.component :as component]
+
+   ;; Stentor custom components
+   [kixi.stentor.core :refer (new-sub-routes new-main-routes new-menu new-database ->AboutMenuitem Menuitem)]
+   [kixi.stentor.cljs :refer (new-cljs-routes)]
+
+   ;; Modular reusable components
    [modular.core :as mod]
    [modular.http-kit :refer (RingHandlerProvider new-webserver)]
    [modular.bidi :refer (RoutesContributor new-bidi-ring-handler-provider)]
+   [modular.cljs-builder :refer (new-cljs-builder)]
+
+   ;; Misc
    clojure.tools.reader
    [clojure.tools.reader.reader-types :refer (indexing-push-back-reader source-logging-push-back-reader)]
    [clojure.java.io :as io]))
@@ -23,6 +31,9 @@
          :bidi-ring-handler (new-bidi-ring-handler-provider)
          :main-routes (new-main-routes)
          :sub-routes (new-sub-routes)
+         :cljs-routes  (new-cljs-routes (:cljs-builder cfg))
+
+         ;;:cljs-builder (new-cljs-builder (:cljs-builder cfg))
          :menu (new-menu)
          :about (->AboutMenuitem "About")
          :about2 (->AboutMenuitem "About2")

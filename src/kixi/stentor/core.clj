@@ -53,7 +53,7 @@
   ["/index.html" (:index handlers)])
 
 (defn new-main-routes []
-  (new-bidi-routes (make-routes (make-handlers)) "/bar"))
+  (new-bidi-routes (make-routes (make-handlers)) ""))
 
 (defn new-sub-routes []
   (new-bidi-routes (make-routes (make-handlers)) "/bar/foo"))

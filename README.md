@@ -4,6 +4,14 @@ A Clojure library designed to ... well, that part is up to you.
 
 ## Usage
 
+Run
+
+```
+$ lein cljsbuild auto
+```
+
+in another termainal
+
 FIXME
 
 ## License
