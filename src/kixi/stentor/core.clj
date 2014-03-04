@@ -38,19 +38,7 @@
     this)
   Menuitem
   (attributes [this]
-    {:label (str label "...")}
-    )
-  )
-
-(defrecord Hello []
-  component/Lifecycle
-  (start [this] this)
-  (stop [this] this)
-  modular.http-kit/RingHandlerProvider
-  (handler [this] (fn [req] {:status 200 :body "Hello Neale!!!!!!!!!"})))
-
-(defn new-hello []
-  (new Hello))
+    {:label (str label "...")}))
 
 (defn index [handlers-p]
   (fn [req]

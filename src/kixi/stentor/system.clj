@@ -1,6 +1,6 @@
 (ns kixi.stentor.system
   (:require
-   [kixi.stentor.core :refer (new-sub-routes new-main-routes new-hello new-menu new-database ->AboutMenuitem Menuitem)]
+   [kixi.stentor.core :refer (new-sub-routes new-main-routes new-menu new-database ->AboutMenuitem Menuitem)]
    [com.stuartsierra.component :as component]
    [modular.core :as mod]
    [modular.http-kit :refer (RingHandlerProvider new-webserver)]
@@ -20,7 +20,6 @@
   (let [cfg (config)]
     (-> (component/system-map
          :webserver (new-webserver (:webserver cfg))
-;;         :ring-handler (new-hello)
          :bidi-ring-handler (new-bidi-ring-handler-provider)
          :main-routes (new-main-routes)
          :sub-routes (new-sub-routes)
