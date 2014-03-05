@@ -10,7 +10,7 @@
    [modular.core :as mod]
    [modular.http-kit :refer (RingHandlerProvider new-webserver)]
    [modular.bidi :refer (RoutesContributor new-bidi-ring-handler-provider)]
-   [modular.cljs-builder :refer (new-cljs-builder)]
+   ;; [modular.cljs-builder :refer (new-cljs-builder)]
 
    ;; Misc
    clojure.tools.reader
