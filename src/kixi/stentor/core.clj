@@ -48,7 +48,10 @@
               {:index (index p)})))
 
 (defn make-routes [handlers]
-  ["/index.html" (:index handlers)])
+  ["/"
+   [["" (:index handlers)]
+    ["" (bidi/->ResourcesMaybe {})]
+    ]])
 
 (defn new-main-routes []
   (new-bidi-routes (make-routes (make-handlers)) ""))
