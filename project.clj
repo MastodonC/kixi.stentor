@@ -22,6 +22,8 @@
                  ;; anything dependency below this line should be removed
                  ;;[org.clojure/java.classpath "0.2.1"]
                  [org.clojure/clojurescript "0.0-2173"]
+                 [sablono "0.2.6"]
+                 [om "0.5.1"]
                  ]
 
   :source-paths ["src" "src-cljs"]
