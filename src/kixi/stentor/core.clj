@@ -3,6 +3,7 @@
    [modular.http-kit :refer (new-webserver)]
    [modular.bidi :refer (new-bidi-routes new-bidi-ring-handler-provider)]
    [bidi.bidi :as bidi]
+   [clojure.java.io :as io]
    [com.stuartsierra.component :as component]))
 
 (defprotocol Menuitem
@@ -39,7 +40,7 @@
 
 (defn index [handlers-p]
   (fn [req]
-    {:status 200 :body "Hello, this is the index!"}))
+    {:status 200 :body (slurp (io/resource "index.html"))}))
 
 (defn make-handlers []
   (let [p (promise)]
