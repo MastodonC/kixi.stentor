@@ -56,5 +56,16 @@
 (defn new-main-routes []
   (new-bidi-routes (make-routes (make-handlers)) ""))
 
-(defn new-sub-routes []
-  (new-bidi-routes (make-routes (make-handlers)) "/bar/foo"))
+(defn make-data-handlers []
+  (let [p (promise)]
+    @(deliver p
+              {:index (index p)})))
+
+(defn make-data-routes [handlers]
+  ["/"
+   [["" (:index handlers)]
+    ;;["" (bidi/->ResourcesMaybe {})]
+    ]])
+
+(defn new-data-routes []
+  (new-bidi-routes (make-data-routes (make-data-handlers)) "/data"))

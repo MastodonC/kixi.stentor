@@ -3,7 +3,7 @@
    [com.stuartsierra.component :as component]
 
    ;; Stentor custom components
-   [kixi.stentor.core :refer (new-sub-routes new-main-routes new-menu new-database ->AboutMenuitem Menuitem)]
+   [kixi.stentor.core :refer (new-data-routes new-main-routes new-menu new-database ->AboutMenuitem Menuitem)]
    [kixi.stentor.cljs :refer (new-cljs-routes)]
 
    ;; Modular reusable components
@@ -30,7 +30,7 @@
          :webserver (new-webserver (:webserver cfg))
          :bidi-ring-handler (new-bidi-ring-handler-provider)
          :main-routes (new-main-routes)
-         :sub-routes (new-sub-routes)
+         :data-routes (new-data-routes)
          :cljs-routes  (new-cljs-routes (:cljs-builder cfg))
 
          ;;:cljs-builder (new-cljs-builder (:cljs-builder cfg))
