@@ -1,6 +1,6 @@
-# jigdep
+# Stentor
 
-A Clojure library designed to ... well, that part is up to you.
+Making city data shout.
 
 ## Usage
 
@@ -12,11 +12,9 @@ $ lein cljsbuild auto
 
 in another termainal
 
-FIXME
-
 ## License
 
-Copyright © 2014 FIXME
+Copyright © 2014 Mastodon C
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
