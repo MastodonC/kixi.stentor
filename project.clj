@@ -32,8 +32,8 @@
   :cljsbuild {
     :builds [{:id "dev"
               :source-paths ["src-cljs"]
-              :compiler {:output-to "target/js/main.js"
-                         ;; :output-dir ""
+              :compiler {:output-to "out/main.js"
+                         :output-dir "out"
                          :externs ["om/externs/react.js" "lib/topojson.js"]
                          :optimizations :none
                          :source-map true}}]}
