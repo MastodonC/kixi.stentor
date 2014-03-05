@@ -32,11 +32,11 @@
   :cljsbuild {
     :builds [{:id "dev"
               :source-paths ["src-cljs"]
-              :compiler {
-                :output-to "main.js"
-                :output-dir "target/js"
-                :optimizations :none
-                :source-map true}}]}
+              :compiler {:output-to "target/js/main.js"
+                         ;; :output-dir ""
+                         :externs ["om/externs/react.js" "lib/topojson.js"]
+                         :optimizations :none
+                         :source-map true}}]}
 
   :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.4"]]
                    :source-paths ["dev"]}
