@@ -11,8 +11,7 @@
 (defrecord Database []
   component/Lifecycle
   (start [this] this)
-  (stop [this] this)
-)
+  (stop [this] this))
 
 (defn new-database []
   (new Database))
@@ -21,14 +20,12 @@
   component/Lifecycle
   (start [this]
     (update-in this [:menuitems]
-               (partial map attributes))
-    )
+               (partial map attributes)))
   (stop [this]
     this))
 
 (defn new-menu []
-  (new Menu)
-)
+  (new Menu))
 
 (defrecord AboutMenuitem [label]
   component/Lifecycle
