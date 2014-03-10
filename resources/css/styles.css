@@ -192,3 +192,19 @@ path.selected {
 .hidden {
     display: none;
 }
+
+
+/* Points of interest selector */
+#poi
+{
+    background: white;
+    padding: 6px;
+    position: fixed;
+    top: 70px;
+    right: 10px;
+    z-index: 1
+}
+
+#poi form select {
+    width: 150px;
+}

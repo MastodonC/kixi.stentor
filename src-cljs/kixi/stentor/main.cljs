@@ -9,7 +9,7 @@
 
 (def app-model
   (atom
-   {:layers []}))
+   {}))
 
 (def tile-url "http://{s}.tile.cloudmade.com/84b48bab1db44fb0a70c83bfc087b616/997/256/{z}/{x}/{y}.png")
 
@@ -26,6 +26,22 @@
     (.addTo tiles m)
     {:leaflet-map m}))
 
+(defn poi-selector-component
+  [app-state owner]
+  (reify
+    om/IRender
+    (render [this]
+      (html [:div#poi
+             [:h2 "Points of Interest"]
+             [:form
+              [:select
+               {:onChange
+                (fn [e]
+                  (om/update! app-state :poi (.-value (.-target e))))}
+               [:option "None"]
+               [:option {:value "A"} "Layer 1"]
+               [:option {:value "B"} "Layer 2"]]]]))))
+
 (defn map-component
   "put the leaflet map as state in the om component"
   [{:keys [selection] :as app-state} owner]
@@ -37,14 +53,9 @@
       ;; TODO don't use json GETs!! see https://github.com/yogthos/cljs-ajax
       (GET "/geojson.js"
           {:handler (fn [e]
-                      (println "here")
-                      (let [data (clj->js e)]
-                        (println "type" (type data))
-                        (.dir js/console data)
-                        (let [layer (-> js/L (.geoJson data))]
-                          (.log js/console "layer is" layer)
-                          (om/transact! app-state [:layers] #(conj % layer))
-                          )))
+                      (let [data (clj->js e)
+                            layer (-> js/L (.geoJson data))]
+                        (om/update! app-state :poi-layer layer)))
            :response-format :json}))
 
     om/IRender
@@ -61,12 +72,18 @@
     (did-update [this prev-props prev-state]
       (let [node (om/get-node owner)
             {:keys [leaflet-map] :as map} (om/get-state owner :map)
-            layers (:layers app-state)]
+            ]
         ;; remove all the layers
-        (doseq [layer layers]
-          (.addLayer leaflet-map layer))))))
+        (when-let [layer (:poi-layer app-state)]
+          (.addLayer leaflet-map layer))
+
+        #_(println "poi value is " (:poi app-state))
+        #_(when (= "A" (:poi app-state))
+          (doseq [layer layers]
+            (.addLayer leaflet-map layer)))))))
 
 (om/root map-component app-model {:target (. js/document (getElementById "mappy"))})
+(om/root poi-selector-component app-model {:target (. js/document (getElementById "poi"))})
 
 (defn widget [data]
   (om/component
