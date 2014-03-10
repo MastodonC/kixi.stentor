@@ -9,7 +9,7 @@
    ;; Modular reusable components
    [modular.core :as mod]
    [modular.http-kit :refer (new-webserver)]
-   [modular.ring :refer (RingHandlerProvider)]
+   [modular.ring :refer (resolve-handler-provider)]
    [modular.bidi :refer (RoutesContributor new-bidi-ring-handler-provider)]
    ;; [modular.cljs-builder :refer (new-cljs-builder)]
 
@@ -40,11 +40,10 @@
          :about2 (->AboutMenuitem "About2")
          :database (new-database))
         (mod/resolve-contributors :menuitems Menuitem)
-        (mod/resolve-contributors :ring-handler-provider RingHandlerProvider :cardinality 1)
+        (resolve-handler-provider)
         (mod/resolve-contributors :routes-contributors RoutesContributor) ; only temporarily cardinality of 1
         (component/system-using
          {:menu [:menuitems :database]
-          :webserver [:ring-handler-provider]
           :ring-handler-provider [:routes-contributors]}))))
 
 ;;(prn (-> (component/start (system))))
