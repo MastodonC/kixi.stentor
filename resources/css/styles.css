@@ -54,7 +54,7 @@ header {
 
 #map {
     position: absolute;
-    top: 220px;
+    top: 50px;
     bottom: 0;
     left: 0;
     right: 0;
@@ -116,7 +116,7 @@ tr.selected th, tr.selected td {
     border-color: #bde;
 }
 
-#features tbody td, 
+#features tbody td,
 #features tbody th {
     cursor: pointer;
 }
@@ -162,7 +162,7 @@ span.swatch {
 #styles .color-scale td input {
     background: transparent;
     margin: 3px 0px;
-} 
+}
 
 #styles .color-scale td .style-range-max,
 #styles .color-scale td .style-domain-max {
@@ -177,13 +177,13 @@ span.swatch {
 }
 
 path.selected {
-  -webkit-animation-name: blinker;  
-  -webkit-animation-iteration-count: infinite;  
+  -webkit-animation-name: blinker;
+  -webkit-animation-iteration-count: infinite;
   -webkit-animation-timing-function: linear;
   -webkit-animation-duration: 2s;
 }
 
-@-webkit-keyframes blinker {  
+@-webkit-keyframes blinker {
   0% { opacity: 1.0; }
   50% { opacity: 0.3; }
   100% { opacity: 1.0; }
