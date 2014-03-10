@@ -31,6 +31,11 @@
                  [juxt/modular.bidi "0.1.0-SNAPSHOT"]
                  ;; [juxt/modular.cljs-builder "0.1.0-SNAPSHOT"]
 
+                 ;; AJAX
+                 [cljs-ajax "0.2.3"]
+
+                 ;; Om Debugging
+                 [ankha "0.1.1"]
 
                  ;; temp
                  ;; anything dependency below this line should be removed
