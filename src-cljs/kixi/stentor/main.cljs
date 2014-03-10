@@ -49,8 +49,7 @@
 
     om/IRender
     (render [this]
-      (println "Rendering!")
-      (html [:div#map {:ref "map"}]))
+      (html [:div#map]))
 
     om/IDidMount
     (did-mount [this]
