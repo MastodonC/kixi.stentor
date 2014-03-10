@@ -1,6 +1,7 @@
 (ns kixi.stentor.main
-  (:require [om.core :as om :include-macros true]
-            [sablono.core :as html :refer-macros [html]]))
+  (:require
+   [om.core :as om :include-macros true]
+   [sablono.core :as html :refer-macros [html]]))
 
 (enable-console-print!)
 
@@ -10,14 +11,13 @@
 
 (defn create-map
   [id]
-  (let [m     (-> js/L
-                  (.map id)
-                  (.setView  (array 53.0 -1.5) 6))
+  (let [m (-> js/L
+              (.map id)
+              (.setView (array 53.0 -1.5) 6))
         tiles (-> js/L (.tileLayer
                         tile-url
-                        {:maxZoom     16
-                         :attribution "Map data &copy; 2011 OpenStreetMap contributors, Imagery &copy; 2012 CloudMade"}))
-        ]
+                        {:maxZoom 16
+                         :attribution "Map data &copy; 2011 OpenStreetMap contributors, Imagery &copy; 2012 CloudMade"}))]
     (.addTo tiles m)
     {:leaflet-map m}))
 
@@ -49,4 +49,3 @@
           (html/submit-button "React!")])))
 
 ;;(om/root widget {} {:target (. js/document (getElementById "app"))})
-
