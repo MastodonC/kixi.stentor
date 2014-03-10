@@ -8,7 +8,8 @@
 
    ;; Modular reusable components
    [modular.core :as mod]
-   [modular.http-kit :refer (RingHandlerProvider new-webserver)]
+   [modular.http-kit :refer (new-webserver)]
+   [modular.ring :refer (RingHandlerProvider)]
    [modular.bidi :refer (RoutesContributor new-bidi-ring-handler-provider)]
    ;; [modular.cljs-builder :refer (new-cljs-builder)]
 
