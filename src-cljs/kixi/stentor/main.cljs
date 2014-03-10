@@ -14,9 +14,9 @@
                   (.map id)
                   (.setView  (array 53.0 -1.5) 6))
         tiles (-> js/L (.tileLayer
-                     tile-url
-                     {:maxZoom     16
-                      :attribution "Map data &copy; 2011 OpenStreetMap contributors, Imagery &copy; 2012 CloudMade"}))
+                        tile-url
+                        {:maxZoom     16
+                         :attribution "Map data &copy; 2011 OpenStreetMap contributors, Imagery &copy; 2012 CloudMade"}))
         ]
     (.addTo tiles m)
     {:leaflet-map m}))
