@@ -27,8 +27,8 @@
                  [juxt/modular "0.1.0-SNAPSHOT"]
                  ;; EDN reader with location metadata
                  [org.clojure/tools.reader "0.8.3"]
-                 [juxt/modular.http-kit "0.1.0-SNAPSHOT"]
-                 [juxt/modular.bidi "0.1.0-SNAPSHOT"]
+                 [juxt.modular/http-kit "0.1.0-SNAPSHOT"]
+                 [juxt.modular/bidi "0.1.0-SNAPSHOT"]
                  ;; [juxt/modular.cljs-builder "0.1.0-SNAPSHOT"]
 
                  ;; AJAX
