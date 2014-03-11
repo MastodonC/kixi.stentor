@@ -16,7 +16,7 @@
   (:require
    [om.core :as om :include-macros true]
    [sablono.core :as html :refer-macros [html]]
-   [ajax.core :refer (GET POST)]
+   [ajax.core :refer (GET ajax-request)]
    [ankha.core :as ankha]))
 
 (enable-console-print!)
@@ -24,9 +24,12 @@
 (def app-model
   (atom
    {:poi-layer nil
-    :poi-selector [{:label "Layer 1" :value "A"}
-                   {:label "Layer 2" :value "B"}
-                   {:label "Layer 3" :value "C"}]}))
+    :poi-selector [{:label "Bydureon" :value "bydureon"}
+                   {:label "Exenatide" :value "exenatide"}
+                   {:label "Liraglutide" :value "liraglutide"}
+                   {:label "Prucalopride" :value "prucalopride"}
+                   {:label "Rivaroxaban 15mg" :value "rivaroxaban-15"}
+                   {:label "Rivaroxaban 20mg" :value "rivaroxaban-20"}]}))
 
 (def tile-url "http://{s}.tile.cloudmade.com/84b48bab1db44fb0a70c83bfc087b616/997/256/{z}/{x}/{y}.png")
 
@@ -48,39 +51,34 @@
   (reify
     om/IRender
     (render [this]
-      (html [:div#poi
-             [:h2 "Points of Interest"]
-             [:form
-              [:select
-               {:onChange
-                (fn [e]
-                  (let [value (.-value (.-target e))]
-                    (println "Getting URI" value)
-                    (GET "/geojson.js"
-                        {:handler (fn [json]
-                                    (let [data (clj->js json)
-                                          layer (-> js/L (.geoJson data))]
-                                      (om/update! app-state :poi-layer-to-remove (:poi-layer @app-state))
-                                      (when (= "A" value)
-                                        (om/update! app-state :poi-layer-to-add layer))))
-                         :response-format :json}))
-                  )}
-               [:option "None"]
-               (for [{:keys [label value]} (:poi-selector app-state)]
-                 [:option {:value value} label]
-                 )
-               ]]]))))
+      (html
+       [:div#poi
+        [:h2 "Points of Interest"]
+        [:form
+         [:select
+          {:onChange
+           (fn [e]
+             (let [value (.-value (.-target e))]
+               ;; TODO don't use json GETs!! see
+               ;; https://github.com/yogthos/cljs-ajax using
+               ;; ajax-request instead of GET because Julian says
+               ;; to due to a bug, see discussion here:
+               ;; https://github.com/yogthos/cljs-ajax/issues/38
+               (GET (str "/data/geojson/" value)
+                             {:handler (fn [json]
+                                         (let [data (clj->js json)
+                                               layer (-> js/L (.geoJson data))]
+                                           (om/update! app-state :poi-layer-to-remove (:poi-layer @app-state))
+                                           (om/update! app-state :poi-layer-to-add layer)))
+                              :response-format :json})))}
+          [:option "None"]
+          (for [{:keys [label value]} (:poi-selector app-state)]
+            [:option {:value value} label])]]]))))
 
 (defn map-component
   "put the leaflet map as state in the om component"
   [{:keys [selection] :as app-state} owner]
   (reify
-
-    om/IWillMount
-    (will-mount [this]
-      (println "will mount")
-      ;; TODO don't use json GETs!! see https://github.com/yogthos/cljs-ajax
-      )
 
     om/IRender
     (render [this]
@@ -107,21 +105,9 @@
           (om/update! app-state :poi-layer-to-add nil)
           (om/update! app-state :poi-layer layer))
 
-        #_(println "poi value is " (:poi app-state))
-        #_(when (= "A" (:poi app-state))
-          (doseq [layer layers]
-            (.addLayer leaflet-map layer)))))))
+        ))))
 
 (om/root map-component app-model {:target (. js/document (getElementById "mappy"))})
 (om/root poi-selector-component app-model {:target (. js/document (getElementById "poi"))})
-
-(defn widget [data]
-  (om/component
-   (html [:div "Hello world!"
-          [:ul (for [n (range 1 10)]
-                 [:li n])]
-          (html/submit-button "React!")])))
-
-;;(om/root widget {} {:target (. js/document (getElementById "app"))})
 
 (om/root ankha/inspector app-model {:target (.getElementById js/document "debug")})

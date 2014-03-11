@@ -46,6 +46,7 @@
 
                  ;; Liberator
                  [liberator "0.11.0"]
+                 [cheshire "5.3.1"] ; cheshire for json
                  ]
 
   :source-paths ["src" "src-cljs"]
