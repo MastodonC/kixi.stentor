@@ -17,14 +17,15 @@
    [com.stuartsierra.component :as component]
 
    ;; Stentor custom components
-   [kixi.stentor.core :refer (new-data-routes new-main-routes new-menu new-database ->AboutMenuitem Menuitem)]
+   [kixi.stentor.core :refer (new-main-routes)]
+   [kixi.stentor.api :refer (new-api-routes)]
    [kixi.stentor.cljs :refer (new-cljs-routes)]
 
    ;; Modular reusable components
    [modular.core :as mod]
    [modular.http-kit :refer (new-webserver)]
    [modular.ring :refer (resolve-handler-provider)]
-   [modular.bidi :refer (RoutesContributor new-bidi-ring-handler-provider)]
+   [modular.bidi :refer (new-bidi-ring-handler-provider resolve-routes-contributors)]
    ;; [modular.cljs-builder :refer (new-cljs-builder)]
 
    ;; Misc
@@ -45,19 +46,9 @@
          :webserver (new-webserver (:webserver cfg))
          :bidi-ring-handler (new-bidi-ring-handler-provider)
          :main-routes (new-main-routes)
-         :data-routes (new-data-routes)
-         :cljs-routes  (new-cljs-routes (:cljs-builder cfg))
-
-         ;;:cljs-builder (new-cljs-builder (:cljs-builder cfg))
-         :menu (new-menu)
-         :about (->AboutMenuitem "About")
-         :about2 (->AboutMenuitem "About2")
-         :database (new-database))
-        (mod/resolve-contributors :menuitems Menuitem)
+         :api-routes (new-api-routes)
+         :cljs-routes (new-cljs-routes (:cljs-builder cfg))
+         )
         (resolve-handler-provider)
-        (mod/resolve-contributors :routes-contributors RoutesContributor) ; only temporarily cardinality of 1
-        (component/system-using
-         {:menu [:menuitems :database]
-          :ring-handler-provider [:routes-contributors]}))))
-
-;;(prn (-> (component/start (system))))
+        (resolve-routes-contributors)
+        (component/system-using {}))))

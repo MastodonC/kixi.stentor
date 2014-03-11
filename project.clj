@@ -43,6 +43,9 @@
                  [org.clojure/clojurescript "0.0-2173"]
                  [sablono "0.2.6"]
                  [om "0.5.1"]
+
+                 ;; Liberator
+                 [liberator "0.11.0"]
                  ]
 
   :source-paths ["src" "src-cljs"]

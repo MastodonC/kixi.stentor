@@ -12,28 +12,25 @@
 ;; See the License for the specific language governing permissions and
 ;; limitations under the License.
 
-(ns kixi.stentor.core
+(ns kixi.stentor.api
   (:require
-   [modular.http-kit :refer (new-webserver)]
-   [modular.bidi :refer (new-bidi-routes new-bidi-ring-handler-provider)]
-   [bidi.bidi :as bidi]
-   [clojure.java.io :as io]
-   [com.stuartsierra.component :as component]))
+   [modular.bidi :refer (new-bidi-routes)]
+   [liberator.core :refer (defresource)]))
 
-(defn index [handlers-p]
-  (fn [req]
-    {:status 200 :body (slurp (io/resource "index.html"))}))
+(defresource index [handlers]
+  :available-media-types ["text/html"]
+  :handle-ok "OK, I'm an API, how are you?")
 
-(defn make-handlers []
+(defn make-api-handlers []
   (let [p (promise)]
     @(deliver p
               {:index (index p)})))
 
-(defn make-routes [handlers]
+(defn make-api-routes [handlers]
   ["/"
-   [["" (:index handlers)]
-    ["" (bidi/->ResourcesMaybe {})]
-    ]])
+   [["index" (:index handlers)]]])
 
-(defn new-main-routes []
-  (new-bidi-routes (make-routes (make-handlers)) ""))
+(defn new-api-routes []
+  (-> (make-api-handlers)
+      make-api-routes
+      (new-bidi-routes "/data")))
