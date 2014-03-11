@@ -46,9 +46,9 @@
                         {:handler (fn [json]
                                     (let [data (clj->js json)
                                           layer (-> js/L (.geoJson data))]
-                                      (om/update! app-state :layer-to-remove (:poi-layer @app-state))
+                                      (om/update! app-state :poi-layer-to-remove (:poi-layer @app-state))
                                       (when (= "A" value)
-                                        (om/update! app-state :layer-to-add layer))))
+                                        (om/update! app-state :poi-layer-to-add layer))))
                          :response-format :json}))
                   )}
                [:option "None"]
@@ -83,14 +83,14 @@
       (let [node (om/get-node owner)
             {:keys [leaflet-map] :as map} (om/get-state owner :map)
             ]
-        (when-let [layer (:layer-to-remove app-state)]
+        (when-let [layer (:poi-layer-to-remove app-state)]
           (.removeLayer leaflet-map layer)
-          (om/update! app-state :layer-to-remove nil)
+          (om/update! app-state :poi-layer-to-remove nil)
           (om/update! app-state :poi-layer nil))
 
-        (when-let [layer (:layer-to-add app-state)]
+        (when-let [layer (:poi-layer-to-add app-state)]
           (.addLayer leaflet-map layer)
-          (om/update! app-state :layer-to-add nil)
+          (om/update! app-state :poi-layer-to-add nil)
           (om/update! app-state :poi-layer layer))
 
         #_(println "poi value is " (:poi app-state))
