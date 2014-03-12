@@ -193,19 +193,44 @@ path.selected {
     display: none;
 }
 
-
 /* Points of interest selector */
-#poi
+#panel
 {
     background: white;
+    opacity: 0.9;
     padding: 6px;
-    position: fixed;
-    top: 70px;
-    right: 10px;
     box-shadow: 0 1px 5px rgba(0,0,0,0.65);
     border-radius: 4px;
 }
 
-#poi form select {
+#panel {
+    position: fixed;
+    top: 70px;
+    right: 10px;
+}
+
+#panel section {
+    margin-top: 10px;
+}
+
+#panel section h2 {
+    margin-bottom: 3px;
+}
+
+#panel section:first-child {
+    margin-top: 4px;
+}
+
+#panel select, #panel input {
     width: 150px;
+}
+
+#panel input {
+    padding: 3px;
+    width: 100px;
+}
+
+#panel label {
+    margin: 3px;
+    font-size: 70%;
 }

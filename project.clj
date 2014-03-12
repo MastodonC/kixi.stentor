@@ -34,6 +34,9 @@
                  ;; AJAX
                  [cljs-ajax "0.2.3"]
 
+                 ;; core.async
+                 [org.clojure/core.async "0.1.267.0-0d7780-alpha"]
+
                  ;; Om Debugging
                  [ankha "0.1.1"]
 

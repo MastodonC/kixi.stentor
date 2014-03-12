@@ -13,9 +13,12 @@
 ;; limitations under the License.
 
 (ns kixi.stentor.main
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require
    [om.core :as om :include-macros true]
+   [clojure.string :as string]
    [sablono.core :as html :refer-macros [html]]
+   [cljs.core.async :refer [<! >! chan put! sliding-buffer close! pipe map< filter< mult tap map>]]
    [ajax.core :refer (GET ajax-request)]
    [ankha.core :as ankha]))
 
@@ -46,15 +49,35 @@
     (.addTo tiles m)
     {:leaflet-map m}))
 
-(defn poi-selector-component
-  [app-state owner]
+(defn update-when [x pred f & args]
+  (if pred (apply f x args) x))
+
+(defn ajax [{:keys [in out]} content-type]
+  (go-loop []
+    (when-let [url (<! in)]
+      (GET url
+          (-> {:handler #(put! out %)
+               :headers {"Accept" content-type}
+               :response-format :text}
+              (update-when (= content-type "application/json") merge {:response-format :json :keywords? true})))
+      (recur))))
+
+(defn to-postcode-url [postcode]
+  (println "compacted postcode:" (string/replace postcode #"\w+" ""))
+  (str "http://data.ordnancesurvey.co.uk/doc/postcodeunit/" (string/replace postcode #"\w+" "") ".json"))
+
+(defn to-postcode-url> [ch]
+  (map> to-postcode-url ch))
+
+
+
+(defn points-of-interest [data owner]
   (reify
-    om/IRender
-    (render [this]
+    om/IRenderState
+    (render-state [this state]
       (html
-       [:div#poi
-        [:h2 "Points of Interest"]
-        [:form
+       [:section
+         [:h2 "Points of Interest"]
          [:select
           {:onChange
            (fn [e]
@@ -64,16 +87,64 @@
                ;; ajax-request instead of GET because Julian says
                ;; to due to a bug, see discussion here:
                ;; https://github.com/yogthos/cljs-ajax/issues/38
-               (GET (str "/data/geojson/" value)
-                             {:handler (fn [json]
-                                         (let [data (clj->js json)
-                                               layer (-> js/L (.geoJson data))]
-                                           (om/update! app-state :poi-layer-to-remove (:poi-layer @app-state))
-                                           (om/update! app-state :poi-layer-to-add layer)))
-                              :response-format :json})))}
+               (if (= value "None")
+                 (om/update! data :poi-layer-to-remove (:poi-layer @data))
+                 (GET (str "/data/geojson/" value)
+                     {:handler (fn [body]
+                                 (let [json (clj->js body)
+                                       layer (-> js/L (.geoJson json))]
+                                   (om/update! data :poi-layer-to-remove (:poi-layer @data))
+                                   (om/update! data :poi-layer-to-add layer)))
+                      :response-format :json}))))}
           [:option "None"]
-          (for [{:keys [label value]} (:poi-selector app-state)]
-            [:option {:value value} label])]]]))))
+          (for [{:keys [label value]} (:poi-selector data)]
+            [:option {:value value} label])]]))))
+
+(defn postcode-selector [data owner]
+  (reify
+    om/IInitState
+    (init-state [this]
+      {:in (chan (sliding-buffer 1))
+       :out (chan (sliding-buffer 1))})
+
+    om/IWillMount
+    (will-mount [this] nil)
+
+    om/IRenderState
+    (render-state [this state]
+      (html
+       [:section
+        [:h2 "Zoom to postcode"]
+        [:input {:type "text"}]
+        [:button {:onClick (fn [_] (println "postcode clicked"))} "Zoom"]]
+       ))
+    )
+  )
+
+(defn map-saver [data owner]
+  (reify
+    om/IRenderState
+    (render-state [this state]
+      (html
+       [:section
+        [:h2 "Save current map"]
+        [:label {:for "maplabel-input"} "Save As"]
+        [:input {:id "maplabel-input" :type "text"}]
+        [:button {:onClick (fn [_] (println "TODO: save map!"))} "Save"]]
+       ))))
+
+(defn panel-component
+  [app-state owner]
+  (reify
+    om/IRender
+    (render [this]
+      (html
+       [:div
+        (om/build points-of-interest app-state)
+        (om/build postcode-selector app-state)
+        (om/build map-saver app-state)]))))
+
+;; http://data.ordnancesurvey.co.uk/doc/postcodeunit/HA99HD.json
 
 (defn map-component
   "put the leaflet map as state in the om component"
@@ -103,11 +174,9 @@
         (when-let [layer (:poi-layer-to-add app-state)]
           (.addLayer leaflet-map layer)
           (om/update! app-state :poi-layer-to-add nil)
-          (om/update! app-state :poi-layer layer))
-
-        ))))
+          (om/update! app-state :poi-layer layer))))))
 
 (om/root map-component app-model {:target (. js/document (getElementById "mappy"))})
-(om/root poi-selector-component app-model {:target (. js/document (getElementById "poi"))})
+(om/root panel-component app-model {:target (. js/document (getElementById "panel"))})
 
 (om/root ankha/inspector app-model {:target (.getElementById js/document "debug")})
