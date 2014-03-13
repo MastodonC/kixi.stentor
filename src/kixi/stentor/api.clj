@@ -25,28 +25,28 @@
 
 (io/resource (str "data/" "bydureon.js"))
 
-(defresource geojson [drug-data-path handlers]
+(defresource geojson-poi [poi-path handlers]
   :available-media-types ["application/json"]
-  :exists? (fn [{{{:keys [drugname]} :route-params} :request}]
-             (when-let [res (io/file drug-data-path (str drugname ".js"))]
+  :exists? (fn [{{{:keys [poi]} :route-params} :request}]
+             (when-let [res (io/file poi-path (str poi ".js"))]
                {::resource res}))
-  :handle-ok (fn [{{{:keys [drugname]} :route-params} :request res ::resource}]
+  :handle-ok (fn [{{{:keys [poi]} :route-params} :request res ::resource}]
                (when res (json/parse-stream (io/reader res)))))
 
-(defn make-api-handlers [drug-data-path]
+(defn make-api-handlers [poi-path]
   (let [p (promise)]
     @(deliver p
               {:index (index p)
-               :geojson (geojson drug-data-path p)})))
+               :geojson-poi (geojson-poi poi-path p)})))
 
 (defn make-api-routes [handlers]
   ["/"
    [["index" (:index handlers)]
-    [["geojson/" :drugname] (:geojson handlers)]]])
+    [["geojson-poi/" :poi] (:geojson-poi handlers)]]])
 
-(defn new-api-routes [drug-data-path]
-  (assert drug-data-path "No drug-data-path")
-  (assert (.exists (io/file drug-data-path)) (format "Directory doesn't exist: %s" drug-data-path))
-  (-> (make-api-handlers drug-data-path)
+(defn new-api-routes [poi-path]
+  (assert poi-path "No poi-path")
+  (assert (.exists (io/file poi-path)) (format "Directory doesn't exist: %s" poi-path))
+  (-> (make-api-handlers poi-path)
       make-api-routes
       (new-bidi-routes "/data")))

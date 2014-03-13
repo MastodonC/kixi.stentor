@@ -46,7 +46,7 @@
          :web-server (new-webserver (:web-server cfg))
          :bidi-ring-handler (new-bidi-ring-handler-provider)
          :main-routes (new-main-routes)
-         :api-routes (new-api-routes (:drugs-data cfg))
+         :api-routes (new-api-routes (:geojson-poi-data cfg))
          :cljs-routes (new-cljs-routes (:cljs-builder cfg))
          )
         (resolve-handler-provider)

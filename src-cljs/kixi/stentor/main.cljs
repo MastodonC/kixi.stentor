@@ -89,7 +89,7 @@
                ;; https://github.com/yogthos/cljs-ajax/issues/38
                (if (= value "None")
                  (om/update! data :poi-layer-to-remove (:poi-layer @data))
-                 (GET (str "/data/geojson/" value)
+                 (GET (str "/data/geojson-poi/" value)
                      {:handler (fn [body]
                                  (let [json (clj->js body)
                                        layer (-> js/L (.geoJson json))]
