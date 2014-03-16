@@ -17,13 +17,32 @@
    [clojure.java.io :as io]
    [modular.bidi :refer (new-bidi-routes)]
    [liberator.core :refer (defresource)]
-   [cheshire.core :as json]))
+   [cheshire.core :as json]
+   [kixi.stentor.colorbrewer :as color]))
 
 (defresource index [handlers]
   :available-media-types ["text/html"]
   :handle-ok "OK, I'm an API, how are you?")
 
 (io/resource (str "data/" "bydureon.js"))
+
+(defn colored-map [geojson]
+  (let [features (->> (:features geojson)
+                      (remove #(nil? (get-in % [:properties :v]))))
+        vs       (map #(get-in % [:properties :v]) features)
+        min-val  (reduce #(min %1 %2) vs)
+        max-val  (reduce #(max %1 %2) vs)
+        steps    7
+        scheme   :Greens]
+    ;; (println (format "min: %s max: %s features: %s" min-val max-val (count features)))
+    {:type "FeatureCollection"
+     :features
+     (mapv (fn [feature]
+             (update-in feature [:properties]
+                        assoc :color
+                        (color/brewer (get-in feature [:properties :v])
+                                      min-val max-val steps scheme)))
+           features)}))
 
 (defresource geojson-poi [poi-path handlers]
   :available-media-types ["application/json"]
