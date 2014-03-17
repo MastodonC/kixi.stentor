@@ -27,8 +27,7 @@
 (io/resource (str "data/" "bydureon.js"))
 
 (defn colored-map [geojson]
-  (let [features (->> (:features geojson)
-                      (remove #(nil? (get-in % [:properties :v]))))
+  (let [features (remove #(nil? (get-in % [:properties :v])) (:features geojson))
         vs       (map #(get-in % [:properties :v]) features)
         min-val  (reduce #(min %1 %2) vs)
         max-val  (reduce #(max %1 %2) vs)
@@ -50,7 +49,11 @@
              (when-let [res (io/file poi-path (str poi ".js"))]
                {::resource res}))
   :handle-ok (fn [{{{:keys [poi]} :route-params} :request res ::resource}]
-               (when res (json/parse-stream (io/reader res)))))
+               (when res
+                 (-> (io/reader res)
+                     (json/parse-stream keyword)
+                     colored-map
+                     ))))
 
 (defn make-api-handlers [poi-path]
   (let [p (promise)]
