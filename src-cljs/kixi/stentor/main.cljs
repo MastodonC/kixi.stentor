@@ -21,22 +21,24 @@
    [cljs.core.async :refer [<! >! chan put! sliding-buffer close! pipe map< filter< mult tap map>]]
    [ajax.core :refer (GET ajax-request)]
    [ankha.core :as ankha]
-   [kixi.stentor.colorbrewer :as color]))
+   [kixi.stentor.colorbrewer :as color]
+   [goog.events :as events]))
 
 (enable-console-print!)
 
 (def app-model
   (atom
    {:poi-layer nil
-    :poi-selector [{:label "Hackney Unemployment" :value "hackney-employment"}]}))
+    :poi-selector [{:label "Hackney Unemployment" :value "hackney-employment"}]
+    :map {:lat 51.505 :lon -0.09}}))
 
 (def tile-url "http://{s}.tile.cloudmade.com/84b48bab1db44fb0a70c83bfc087b616/997/256/{z}/{x}/{y}.png")
 
 (defn create-map
-  [id]
+  [cursor id]
   (let [m (-> js/L
               (.map id)
-              (.setView (array 51.55 -0.11) 13))
+              (.setView (array (:lat cursor) (:lon cursor)) 13))
         tiles (-> js/L (.tileLayer
                         tile-url
                         {:maxZoom 16
@@ -59,8 +61,7 @@
       (recur))))
 
 (defn to-postcode-url [postcode]
-  (println "compacted postcode:" (string/replace postcode #"\w+" ""))
-  (str "http://data.ordnancesurvey.co.uk/doc/postcodeunit/" (string/replace postcode #"\w+" "") ".json"))
+  (str "http://data.ordnancesurvey.co.uk/doc/postcodeunit/" (string/replace postcode #"[\s]+" "") ".json"))
 
 (defn to-postcode-url> [ch]
   (map> to-postcode-url ch))
@@ -113,21 +114,39 @@
     om/IInitState
     (init-state [this]
       {:in (chan (sliding-buffer 1))
-       :out (chan (sliding-buffer 1))})
+       :out (chan (sliding-buffer 1))
+       :initialPostCode "N16 6SB"})
 
     om/IWillMount
-    (will-mount [this] nil)
+    (will-mount [this]
+      (om/set-state! owner :postcode (om/get-state owner :initialPostCode)))
 
     om/IRenderState
     (render-state [this state]
       (html
        [:section
         [:h2 "Zoom to postcode"]
-        [:input {:type "text"}]
-        [:button {:onClick (fn [_] (println "postcode clicked"))} "Zoom"]]
-       ))
-    )
-  )
+        [:input {:type "text"
+                 :defaultValue (:initialPostCode state)
+                 :onChange (fn [e]
+                             (om/set-state! owner :postcode (.-value (.-target e))))}]
+
+        [:button
+         {:onClick (fn [_]
+                     (let [postcode (.toUpperCase (string/replace (om/get-state owner :postcode) #"[\s]+" ""))]
+                       (GET (str "http://data.ordnancesurvey.co.uk/doc/postcodeunit/" postcode ".json")
+                           {:handler (fn [body]
+                                       (let [lat (get-in body [(str "http://data.ordnancesurvey.co.uk/id/postcodeunit/" postcode)
+                                                         "http://www.w3.org/2003/01/geo/wgs84_pos#lat"
+                                                         0 "value"])
+                                             lon (get-in body [(str "http://data.ordnancesurvey.co.uk/id/postcodeunit/" postcode)
+                                                         "http://www.w3.org/2003/01/geo/wgs84_pos#long"
+                                                         0 "value"])]
+                                         (om/update! data [:map :lat] (js/parseFloat lat))
+                                         (om/update! data [:map :lon] (js/parseFloat lon))))
+
+                            :response-format :json})))}
+         "Zoom"]]))))
 
 (defn map-saver [data owner]
   (reify
@@ -153,10 +172,11 @@
         (om/build map-saver app-state)]))))
 
 ;; http://data.ordnancesurvey.co.uk/doc/postcodeunit/HA99HD.json
+;;                     [51.505, -0.09]
 
 (defn map-component
   "put the leaflet map as state in the om component"
-  [{:keys [selection] :as app-state} owner]
+  [app-state owner]
   (reify
 
     om/IRender
@@ -166,14 +186,20 @@
     om/IDidMount
     (did-mount [this]
       (let [node (om/get-node owner)
-            {:keys [leaflet-map] :as map} (create-map node)]
+            {:keys [leaflet-map] :as map} (create-map (:map app-state) node)]
+        (.on leaflet-map "click" (fn [ev] (.dir js/console ev)))
+
         (om/set-state! owner :map map)))
 
     om/IDidUpdate
     (did-update [this prev-props prev-state]
       (let [node (om/get-node owner)
             {:keys [leaflet-map] :as map} (om/get-state owner :map)
+            loc {:lon (get-in app-state [:map :lon])
+                 :lat (get-in app-state [:map :lat])}
             ]
+        (.panTo leaflet-map (clj->js loc))
+
         (when-let [layer (:poi-layer-to-remove app-state)]
           (.removeLayer leaflet-map layer)
           (om/update! app-state :poi-layer-to-remove nil)
