@@ -17,7 +17,7 @@
 (ns kixi.stentor.colorbrewer
     "All the Cynthia Brewer color shemes.")
 
-(def color-schmes
+(def color-schemes
   {:YlGn     {:3 ["#f7fcb9" "#addd8e" "#31a354"] 
                  :4 ["#ffffcc" "#c2e699" "#78c679" "#238443"] 
                  :5 ["#ffffcc" "#c2e699" "#78c679" "#31a354" "#006837"] 
@@ -288,14 +288,14 @@
 (defn brewer [scheme steps idx]
   (let [steps-key (keyword (str steps))]
     (get-in 
-     color-schmes
+     color-schemes
      [scheme steps-key idx])))
 
 ;; To get the color range for legends.
 (defn colors [scheme steps]
   (let [steps-key (keyword (str steps))]
     (get-in 
-     color-schmes
+     color-schemes
      [scheme steps-key])))
 
 ;; (defn brewer [v min max steps scheme]
