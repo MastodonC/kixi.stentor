@@ -50,6 +50,7 @@
                  ;; Liberator
                  [liberator "0.11.0"]
                  [cheshire "5.3.1"] ; cheshire for json
+                 [org.clojure/data.csv "0.1.2"]
 
                  [thheller/shadow-build "0.5.0" :exclusions [org.clojure/clojurescript]]
                  ]
