@@ -92,7 +92,17 @@
                  (GET (str "/data/geojson-poi/" value)
                      {:handler (fn [body]
                                  (let [json (clj->js body)
-                                       layer (-> js/L (.geoJson json))]
+                                       layer (-> js/L (.geoJson
+                                                       json
+                                                       (js-obj "style"
+                                                               (fn [feature]
+                                                                 (js-obj "fillColor"
+                                                                         (aget feature "properties" "color")
+                                                                         ;;"#e7298a"
+                                                                         "weight" 1
+                                                                         "color" "#eee"
+                                                                         "fillOpacity" 0.8))
+                                                               )))]
                                    (om/update! data :poi-layer-to-remove (:poi-layer @data))
                                    (om/update! data :poi-layer-to-add layer)))
                       :response-format :json}))))}
