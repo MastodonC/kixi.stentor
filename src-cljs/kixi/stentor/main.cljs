@@ -20,20 +20,15 @@
    [sablono.core :as html :refer-macros [html]]
    [cljs.core.async :refer [<! >! chan put! sliding-buffer close! pipe map< filter< mult tap map>]]
    [ajax.core :refer (GET ajax-request)]
-   [ankha.core :as ankha]))
+   [ankha.core :as ankha]
+   [kixi.stentor.colorbrewer :as color]))
 
 (enable-console-print!)
 
 (def app-model
   (atom
    {:poi-layer nil
-    :poi-selector [{:label "Hackney Unemployment" :value "hackney-employment"}
-                   {:label "Bydureon" :value "bydureon"}
-                   {:label "Exenatide" :value "exenatide"}
-                   {:label "Liraglutide" :value "liraglutide"}
-                   {:label "Prucalopride" :value "prucalopride"}
-                   {:label "Rivaroxaban 15mg" :value "rivaroxaban-15"}
-                   {:label "Rivaroxaban 20mg" :value "rivaroxaban-20"}]}))
+    :poi-selector [{:label "Hackney Unemployment" :value "hackney-employment"}]}))
 
 (def tile-url "http://{s}.tile.cloudmade.com/84b48bab1db44fb0a70c83bfc087b616/997/256/{z}/{x}/{y}.png")
 
@@ -41,7 +36,7 @@
   [id]
   (let [m (-> js/L
               (.map id)
-              (.setView (array 53.0 -1.5) 6))
+              (.setView (array 51.55 -0.11) 13))
         tiles (-> js/L (.tileLayer
                         tile-url
                         {:maxZoom 16
@@ -70,7 +65,10 @@
 (defn to-postcode-url> [ch]
   (map> to-postcode-url ch))
 
-
+(defn get-color [scheme steps idx]
+  (let [color (color/brewer scheme steps idx)
+        _     (println "scheme: " scheme " steps-key: " steps " idx-key: " idx " color: " color)]
+    color))
 
 (defn points-of-interest [data owner]
   (reify
@@ -78,7 +76,7 @@
     (render-state [this state]
       (html
        [:section
-        [:h2 "Points of Interest"]
+        [:h2 "Areas"]
         [:select
          {:onChange
           (fn [e]
@@ -98,8 +96,7 @@
                                                        (js-obj "style"
                                                                (fn [feature]
                                                                  (js-obj "fillColor"
-                                                                         (aget feature "properties" "color")
-                                                                         ;;"#e7298a"
+                                                                         (color/brewer :PuR 7 (aget feature "properties" "bucket"))
                                                                          "weight" 1
                                                                          "color" "#eee"
                                                                          "fillOpacity" 0.8))

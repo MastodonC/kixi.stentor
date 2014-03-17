@@ -26,21 +26,28 @@
 
 (io/resource (str "data/" "bydureon.js"))
 
-(defn colored-map [geojson]
+(defn bucket [v min max steps]
+  ;; (println (format "v: %s min: %s max: %s steps:%s scheme: %s" v min max steps scheme))
+  (let [step    (/ (- max min) steps)
+        buckets (range min max step)]
+    (dec (count (remove #(< v %) buckets)))))
+
+(defn buckets [geojson]
   (let [features (remove #(nil? (get-in % [:properties :v])) (:features geojson))
         vs       (map #(get-in % [:properties :v]) features)
         min-val  (reduce #(min %1 %2) vs)
         max-val  (reduce #(max %1 %2) vs)
-        steps    7
-        scheme   :Greens]
+        steps    7]
     ;; (println (format "min: %s max: %s features: %s" min-val max-val (count features)))
     {:type "FeatureCollection"
+     :min min-val
+     :max max-val
      :features
      (mapv (fn [feature]
              (update-in feature [:properties]
-                        assoc :color
-                        (color/brewer (get-in feature [:properties :v])
-                                      min-val max-val steps scheme)))
+                        assoc :bucket
+                        (bucket (get-in feature [:properties :v])
+                                min-val max-val steps)))
            features)}))
 
 (defresource geojson-poi [poi-path handlers]
@@ -52,8 +59,7 @@
                (when res
                  (-> (io/reader res)
                      (json/parse-stream keyword)
-                     colored-map
-                     ))))
+                     buckets))))
 
 (defn make-api-handlers [poi-path]
   (let [p (promise)]
