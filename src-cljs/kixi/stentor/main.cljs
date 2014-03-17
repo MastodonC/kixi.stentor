@@ -109,6 +109,21 @@
          (for [{:keys [label value]} (:poi-selector data)]
            [:option {:value value} label])]]))))
 
+(defn pan-to-postcode [data owner]
+  (let [postcode (.toUpperCase (string/replace (om/get-state owner :postcode) #"[\s]+" ""))]
+    (GET (str "http://data.ordnancesurvey.co.uk/doc/postcodeunit/" postcode ".json")
+        {:handler (fn [body]
+                    (let [lat (get-in body [(str "http://data.ordnancesurvey.co.uk/id/postcodeunit/" postcode)
+                                            "http://www.w3.org/2003/01/geo/wgs84_pos#lat"
+                                            0 "value"])
+                          lon (get-in body [(str "http://data.ordnancesurvey.co.uk/id/postcodeunit/" postcode)
+                                            "http://www.w3.org/2003/01/geo/wgs84_pos#long"
+                                            0 "value"])]
+                      (om/update! data [:map :lat] (js/parseFloat lat))
+                      (om/update! data [:map :lon] (js/parseFloat lon))))
+
+         :response-format :json})))
+
 (defn postcode-selector [data owner]
   (reify
     om/IInitState
@@ -129,24 +144,12 @@
         [:input {:type "text"
                  :defaultValue (:initialPostCode state)
                  :onChange (fn [e]
-                             (om/set-state! owner :postcode (.-value (.-target e))))}]
-
+                             (om/set-state! owner :postcode (.-value (.-target e))))
+                 :onKeyPress (fn [e] (when (= (.-keyCode e) 13)
+                                       (pan-to-postcode data owner)))}]
         [:button
-         {:onClick (fn [_]
-                     (let [postcode (.toUpperCase (string/replace (om/get-state owner :postcode) #"[\s]+" ""))]
-                       (GET (str "http://data.ordnancesurvey.co.uk/doc/postcodeunit/" postcode ".json")
-                           {:handler (fn [body]
-                                       (let [lat (get-in body [(str "http://data.ordnancesurvey.co.uk/id/postcodeunit/" postcode)
-                                                         "http://www.w3.org/2003/01/geo/wgs84_pos#lat"
-                                                         0 "value"])
-                                             lon (get-in body [(str "http://data.ordnancesurvey.co.uk/id/postcodeunit/" postcode)
-                                                         "http://www.w3.org/2003/01/geo/wgs84_pos#long"
-                                                         0 "value"])]
-                                         (om/update! data [:map :lat] (js/parseFloat lat))
-                                         (om/update! data [:map :lon] (js/parseFloat lon))))
-
-                            :response-format :json})))}
-         "Zoom"]]))))
+         {:onClick (fn [_] (pan-to-postcode data owner))}
+         "Go"]]))))
 
 (defn map-saver [data owner]
   (reify
