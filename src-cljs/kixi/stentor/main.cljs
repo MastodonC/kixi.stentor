@@ -57,10 +57,10 @@
   (go-loop []
     (when-let [url (<! in)]
       (GET url
-          (-> {:handler #(put! out %)
-               :headers {"Accept" content-type}
-               :response-format :text}
-              (update-when (= content-type "application/json") merge {:response-format :json :keywords? true})))
+           (-> {:handler #(put! out %)
+                :headers {"Accept" content-type}
+                :response-format :text}
+               (update-when (= content-type "application/json") merge {:response-format :json :keywords? true})))
       (recur))))
 
 (defn to-postcode-url [postcode]
@@ -78,19 +78,19 @@
     (render-state [this state]
       (html
        [:section
-         [:h2 "Points of Interest"]
-         [:select
-          {:onChange
-           (fn [e]
-             (let [value (.-value (.-target e))]
-               ;; TODO don't use json GETs!! see
-               ;; https://github.com/yogthos/cljs-ajax using
-               ;; ajax-request instead of GET because Julian says
-               ;; to due to a bug, see discussion here:
-               ;; https://github.com/yogthos/cljs-ajax/issues/38
-               (if (= value "None")
-                 (om/update! data :poi-layer-to-remove (:poi-layer @data))
-                 (GET (str "/data/geojson-poi/" value)
+        [:h2 "Points of Interest"]
+        [:select
+         {:onChange
+          (fn [e]
+            (let [value (.-value (.-target e))]
+              ;; TODO don't use json GETs!! see
+              ;; https://github.com/yogthos/cljs-ajax using
+              ;; ajax-request instead of GET because Julian says
+              ;; to due to a bug, see discussion here:
+              ;; https://github.com/yogthos/cljs-ajax/issues/38
+              (if (= value "None")
+                (om/update! data :poi-layer-to-remove (:poi-layer @data))
+                (GET (str "/data/geojson-poi/" value)
                      {:handler (fn [body]
                                  (let [json (clj->js body)
                                        layer (-> js/L (.geoJson
@@ -107,9 +107,9 @@
                                    (om/update! data :poi-layer-to-remove (:poi-layer @data))
                                    (om/update! data :poi-layer-to-add layer)))
                       :response-format :json}))))}
-          [:option "None"]
-          (for [{:keys [label value]} (:poi-selector data)]
-            [:option {:value value} label])]]))))
+         [:option "None"]
+         (for [{:keys [label value]} (:poi-selector data)]
+           [:option {:value value} label])]]))))
 
 (defn postcode-selector [data owner]
   (reify
