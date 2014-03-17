@@ -24,7 +24,7 @@
   :plugins [[lein-cljsbuild "1.0.2"]]
 
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [juxt/modular "0.1.0-SNAPSHOT"]
+                 [juxt/modular "0.2.0-SNAPSHOT"]
                  ;; EDN reader with location metadata
                  [org.clojure/tools.reader "0.8.3"]
                  [juxt.modular/http-kit "0.1.0-SNAPSHOT"]
@@ -50,6 +50,8 @@
                  ;; Liberator
                  [liberator "0.11.0"]
                  [cheshire "5.3.1"] ; cheshire for json
+
+                 [thheller/shadow-build "0.5.0" :exclusions [org.clojure/clojurescript]]
                  ]
 
   :source-paths ["src" "src-cljs"]

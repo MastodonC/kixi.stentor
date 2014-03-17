@@ -36,4 +36,4 @@
     ]])
 
 (defn new-main-routes []
-  (new-bidi-routes (make-routes (make-handlers)) ""))
+  (new-bidi-routes (make-routes (make-handlers)) :context ""))

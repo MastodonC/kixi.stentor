@@ -77,4 +77,4 @@
   (assert (.exists (io/file poi-path)) (format "Directory doesn't exist: %s" poi-path))
   (-> (make-api-handlers poi-path)
       make-api-routes
-      (new-bidi-routes "/data")))
+      (new-bidi-routes :context "/data")))
