@@ -17,10 +17,8 @@
 (ns kixi.stentor.colorbrewer
     "All the Cynthia Brewer color shemes.")
 
-(defn brewer [scheme steps idx]
-  (let [steps-key (keyword (str steps))]
-    (get-in 
-     {:YlGn     {:3 ["#f7fcb9" "#addd8e" "#31a354"] 
+(def color-schmes
+  {:YlGn     {:3 ["#f7fcb9" "#addd8e" "#31a354"] 
                  :4 ["#ffffcc" "#c2e699" "#78c679" "#238443"] 
                  :5 ["#ffffcc" "#c2e699" "#78c679" "#31a354" "#006837"] 
                  :6 ["#ffffcc" "#d9f0a3" "#addd8e" "#78c679" "#31a354" "#006837"] 
@@ -284,8 +282,21 @@
                  :9  ["#8dd3c7" "#ffffb3" "#bebada" "#fb8072" "#80b1d3" "#fdb462" "#b3de69" "#fccde5" "#d9d9d9"] 
                  :10 ["#8dd3c7" "#ffffb3" "#bebada" "#fb8072" "#80b1d3" "#fdb462" "#b3de69" "#fccde5" "#d9d9d9" "#bc80bd"] 
                  :11 ["#8dd3c7" "#ffffb3" "#bebada" "#fb8072" "#80b1d3" "#fdb462" "#b3de69" "#fccde5" "#d9d9d9" "#bc80bd" "#ccebc5"] 
-                 :12 ["#8dd3c7" "#ffffb3" "#bebada" "#fb8072" "#80b1d3" "#fdb462" "#b3de69" "#fccde5" "#d9d9d9" "#bc80bd" "#ccebc5" "#ffed6f"]}}
+                 :12 ["#8dd3c7" "#ffffb3" "#bebada" "#fb8072" "#80b1d3" "#fdb462" "#b3de69" "#fccde5" "#d9d9d9" "#bc80bd" "#ccebc5" "#ffed6f"]}})
+
+;; To color individual features.
+(defn brewer [scheme steps idx]
+  (let [steps-key (keyword (str steps))]
+    (get-in 
+     color-schmes
      [scheme steps-key idx])))
+
+;; To get the color range for legends.
+(defn colors [scheme steps]
+  (let [steps-key (keyword (str steps))]
+    (get-in 
+     color-schmes
+     [scheme steps-key])))
 
 ;; (defn brewer [v min max steps scheme]
 ;;   (let [step        (/ (- max min) steps)
