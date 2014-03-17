@@ -27,7 +27,8 @@
 (def app-model
   (atom
    {:poi-layer nil
-    :poi-selector [{:label "Bydureon" :value "bydureon"}
+    :poi-selector [{:label "Hackney Unemployment" :value "hackney-employment"}
+                   {:label "Bydureon" :value "bydureon"}
                    {:label "Exenatide" :value "exenatide"}
                    {:label "Liraglutide" :value "liraglutide"}
                    {:label "Prucalopride" :value "prucalopride"}
