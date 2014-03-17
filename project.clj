@@ -44,7 +44,7 @@
                  ;; anything dependency below this line should be removed
                  ;;[org.clojure/java.classpath "0.2.1"]
                  [org.clojure/clojurescript "0.0-2173"]
-                 [sablono "0.2.6"]
+                 [sablono "0.2.6" :exclusions [com.facebook/react]]
                  [om "0.5.1"]
 
                  ;; Liberator
