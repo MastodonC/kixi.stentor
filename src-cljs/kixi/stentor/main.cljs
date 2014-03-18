@@ -123,7 +123,7 @@
                                                (fn [feature]
                                                  (js-obj
                                                   "fillColor"
-                                                  (get-color :Blues 7 (aget feature "properties" "bucket"))
+                                                  (color/brewer :Blues 7 (aget feature "properties" "bucket"))
                                                   "weight" 1
                                                   "opacity" 0.8
                                                   "color" "#08306b"
