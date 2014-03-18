@@ -29,12 +29,11 @@
 (def app-model
   (atom
    {:poi-layer nil
-    :poi-selector [{:label "Bydureon" :value "bydureon"}
-                   {:label "Exenatide" :value "exenatide"}
-                   {:label "Liraglutide" :value "liraglutide"}
-                   {:label "Prucalopride" :value "prucalopride"}
-                   {:label "Rivaroxaban 15mg" :value "rivaroxaban-15"}
-                   {:label "Rivaroxaban 20mg" :value "rivaroxaban-20"}]
+    :poi-selector [{:label "Complaints Location (Anonymous)" :value "complaints_locations_anon"}
+                   {:label "Overcrowding (Anonymous)" :value "overcrowding_anon"}
+                   {:label "Rent Arrears (Anonymous)" :value "rent_arrears_anon"}
+                   {:label "Tenure (Anonymous)" :value "tenure_anon"}
+                   {:label "Underoccupancy (Anonymous)" :value "underoccupancy_anon"}]
     :area-layer nil
     :area-selector [{:label "Hackney Unemployment" :value "hackney-employment"}]
     :map {:lat 51.505 :lon -0.09}}))
