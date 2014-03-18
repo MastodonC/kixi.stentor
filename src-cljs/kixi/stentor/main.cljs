@@ -118,14 +118,24 @@
                         (let [json (clj->js body)
                               layer (-> js/L (.geoJson
                                               json
-                                              (js-obj "style"
-                                                      (fn [feature]
-                                                        (js-obj "fillColor"
-                                                                (color/brewer :PuR 7 (aget feature "properties" "bucket"))
-                                                                "weight" 1
-                                                                "color" "#eee"
-                                                                "fillOpacity" 0.8))
-                                                      )))]
+                                              (js-obj
+                                               "style"
+                                               (fn [feature]
+                                                 (js-obj
+                                                  "fillColor"
+                                                  (get-color :Blues 7 (aget feature "properties" "bucket"))
+                                                  "weight" 1
+                                                  "opacity" 0.8
+                                                  "color" "#08306b"
+                                                  "fillOpacity" 0.8))
+                                               
+                                               "pointToLayer"
+                                               (fn [feature latlng]
+                                                 (-> js/L
+                                                     (.circleMarker
+                                                      latlng
+                                                      (js-obj
+                                                       "radius" 8)))))))]
                           (om/update! data :poi-layer-to-remove (:poi-layer @data))
                           (om/update! data :poi-layer-to-add layer)))
              :response-format :json})))))

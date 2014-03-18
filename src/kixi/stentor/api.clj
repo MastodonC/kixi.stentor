@@ -20,42 +20,7 @@
    [cheshire.core :as json]
    [kixi.stentor.colorbrewer :as color]))
 
-(defresource index [handlers]
-  :available-media-types ["text/html"]
-  :handle-ok "OK, I'm an API, how are you?")
-
-;; POI
-
-(defresource poi-data [dir handlers]
-  :available-media-types ["application/json"]
-  :exists? (fn [{{{:keys [path]} :route-params} :request}]
-             (println "dir is" dir)
-             (println "path is" path)
-             (when-let [res (io/file dir (str path ".js"))]
-               {::resource res}))
-  :handle-ok (fn [{{{:keys [path]} :route-params} :request res ::resource}]
-               (when res
-                 (-> (io/reader res)
-                     (json/parse-stream keyword)))))
-
-(defn make-poi-api-handlers [dir]
-  (let [p (promise)]
-    @(deliver p
-              {:data (poi-data dir p)})))
-
-(defn make-poi-api-routes [handlers]
-  [""
-   [[[:path] (:data handlers)]]])
-
-(defn new-poi-api-routes [dir context]
-  (assert dir "No data dir")
-  (assert (.exists (io/file dir)) (format "Directory doesn't exist: %s" dir))
-  (-> (make-poi-api-handlers dir)
-      make-poi-api-routes
-      (new-bidi-routes :context context)))
-
-;; Area
-
+;; Bucketing
 (defn bucket [v min max steps]
   ;; (println (format "v: %s min: %s max: %s steps:%s scheme: %s" v min max steps scheme))
   (let [step    (/ (- max min) steps)
@@ -79,6 +44,43 @@
                         (bucket (get-in feature [:properties :v])
                                 min-val max-val steps)))
            features)}))
+
+(defresource index [handlers]
+  :available-media-types ["text/html"]
+  :handle-ok "OK, I'm an API, how are you?")
+
+;; POI
+
+(defresource poi-data [dir handlers]
+  :available-media-types ["application/json"]
+  :exists? (fn [{{{:keys [path]} :route-params} :request}]
+             (println "dir is" dir)
+             (println "path is" path)
+             (when-let [res (io/file dir (str path ".js"))]
+               {::resource res}))
+  :handle-ok (fn [{{{:keys [path]} :route-params} :request res ::resource}]
+               (when res
+                 (-> (io/reader res)
+                     (json/parse-stream keyword)
+                     buckets))))
+
+(defn make-poi-api-handlers [dir]
+  (let [p (promise)]
+    @(deliver p
+              {:data (poi-data dir p)})))
+
+(defn make-poi-api-routes [handlers]
+  [""
+   [[[:path] (:data handlers)]]])
+
+(defn new-poi-api-routes [dir context]
+  (assert dir "No data dir")
+  (assert (.exists (io/file dir)) (format "Directory doesn't exist: %s" dir))
+  (-> (make-poi-api-handlers dir)
+      make-poi-api-routes
+      (new-bidi-routes :context context)))
+
+;; Area
 
 (defresource area-data [dir handlers]
   :available-media-types ["application/json"]
