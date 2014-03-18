@@ -12,6 +12,24 @@ $ lein cljsbuild auto
 
 in another termainal
 
+### Configuration
+
+Your `$HOME/.stentor.edn` file should contain something like the following :-
+
+```clojure
+{
+ :database {:keyspace "test"}
+
+ :web-server {:port 8010}
+
+ :data-dir
+ {:poi "/home/malcolm/src/stentor-data/drugs"
+  :area "/home/malcolm/src/stentor-data/choropleth"
+  }
+
+ }
+```
+
 ## License
 
 Copyright © 2014 Mastodon C
