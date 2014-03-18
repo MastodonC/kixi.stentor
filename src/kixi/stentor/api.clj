@@ -63,7 +63,6 @@
     (dec (count (remove #(< v %) buckets)))))
 
 (defn buckets [geojson]
-  (println "geojson is" geojson)
   (let [features (remove #(nil? (get-in % [:properties :v])) (:features geojson))
         vs       (map #(get-in % [:properties :v]) features)
         min-val  (reduce #(min %1 %2) vs)
