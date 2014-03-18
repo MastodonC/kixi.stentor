@@ -36,7 +36,30 @@
                    {:label "Underoccupancy (Anonymous)" :value "underoccupancy_anon"}
                    {:label "Hackney Schools" :value "schools_hackney"}]
     :area-layer nil
-    :area-selector [{:label "Hackney Unemployment" :value "hackney-employment"}]
+    :area-selector [{:label "Hackney Unemployment" :value "hackney-employment"}
+                    {:label "Accommodation Type" :value "accommodationtype_oa_hackney"}
+                    {:label "Occupancy" :value "occupancy_oa_hackney"}
+                    {:label "Tenure" :value "tenure_oa_hackney"}
+                    
+                    
+                    {:label "Belonging (WARM)" :value "belonging_oa_hackney"}
+                    {:label "Community Cohesion (WARM)" :value "communitycohesion_lsoa_hackney"}
+                    {:label "Community Safety (WARM)" :value "communitysafety_lsoa_hackney"}
+                    {:label "Resilience (WARM)" :value "resilience_oa_hackney"}
+                    {:label "Taking Part (WARM)" :value "takingpart_lsoa_hackney"}
+                    
+
+                    
+                    {:label "Summary (Crime)" :value "crime_summary_lsoa_hackney_narrow"}
+                    {:label "Burglary (Crime)" :value "burglary_lsoa_hackney_narrow"}
+                    {:label "Criminal Damage (Crime)" :value "criminal_damage_lsoa_hackney_narrow"}
+                    {:label "Drugs (Crime)" :value "drugs_lsoa_hackney_narrow"}
+                    {:label "Other Crime (Crime)" :value "other_crime_lsoa_hackney_narrow"}
+                    {:label "Robbery (Crime)" :value "robbery_lsoa_hackney_narrow"}
+                    {:label "Theft & Handling (Crime)" :value "theft_and_handling_lsoa_hackney_narrow"}
+                    {:label "Violence Against the Person (Crime)" :value "violence_lsoa_hackney_narrow"}
+                    
+                    ]
     :map {:lat 51.505 :lon -0.09}}))
 
 (def tile-url "http://{s}.tile.cloudmade.com/84b48bab1db44fb0a70c83bfc087b616/997/256/{z}/{x}/{y}.png")
