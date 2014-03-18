@@ -29,35 +29,37 @@
 (def app-model
   (atom
    {:poi-layer nil
-    :poi-selector [{:label "Complaints Location (Anonymous)" :value "complaints_locations_anon"}
-                   {:label "Overcrowding (Anonymous)" :value "overcrowding_anon"}
-                   {:label "Rent Arrears (Anonymous)" :value "rent_arrears_anon"}
-                   {:label "Tenure (Anonymous)" :value "tenure_anon"}
-                   {:label "Underoccupancy (Anonymous)" :value "underoccupancy_anon"}
-                   {:label "Hackney Schools" :value "schools_hackney"}]
+    :poi-selector [{:label "Real Time Complaints" :value "complaints_locations_anon"}
+                   {:label "Percentage Houses Overcrowded" :value "overcrowding_anon"}
+                   {:label "Percentage Houses in Rent Arrears" :value "rent_arrears_anon"}
+                   {:label "Median Tenure in Years" :value "tenure_anon"}
+                   {:label "Percentage Houses Underoccupied" :value "underoccupancy_anon"}
+                   {:label "School Pupil Numbers" :value "schools_hackney"}]
     :area-layer nil
-    :area-selector [{:label "Hackney Unemployment" :value "hackney-employment"}
-                    {:label "Accommodation Type" :value "accommodationtype_oa_hackney"}
-                    {:label "Occupancy" :value "occupancy_oa_hackney"}
-                    {:label "Tenure" :value "tenure_oa_hackney"}
-                    
-                    
+    :area-selector [;; Acommodation
+                    {:label "Percent Unemployed" :value "hackney-employment"}
+                    {:label "Percent Flats (vs Houses)" :value "accommodationtype_oa_hackney"}
+                    {:label "Percent Overoccupied" :value "occupancy_oa_hackney"}
+
+                    ;; Schools
+                    {:label "Percent Social Rented" :value "tenure_oa_hackney"}
+
+                    ;; Warm
                     {:label "Belonging (WARM)" :value "belonging_oa_hackney"}
                     {:label "Community Cohesion (WARM)" :value "communitycohesion_lsoa_hackney"}
                     {:label "Community Safety (WARM)" :value "communitysafety_lsoa_hackney"}
                     {:label "Resilience (WARM)" :value "resilience_oa_hackney"}
                     {:label "Taking Part (WARM)" :value "takingpart_lsoa_hackney"}
-                    
 
-                    
-                    {:label "Summary (Crime)" :value "crime_summary_lsoa_hackney_narrow"}
-                    {:label "Burglary (Crime)" :value "burglary_lsoa_hackney_narrow"}
-                    {:label "Criminal Damage (Crime)" :value "criminal_damage_lsoa_hackney_narrow"}
-                    {:label "Drugs (Crime)" :value "drugs_lsoa_hackney_narrow"}
-                    {:label "Other Crime (Crime)" :value "other_crime_lsoa_hackney_narrow"}
-                    {:label "Robbery (Crime)" :value "robbery_lsoa_hackney_narrow"}
-                    {:label "Theft & Handling (Crime)" :value "theft_and_handling_lsoa_hackney_narrow"}
-                    {:label "Violence Against the Person (Crime)" :value "violence_lsoa_hackney_narrow"}
+                    ;; Crime
+                    {:label "Total Crimes Last Year" :value "crime_summary_lsoa_hackney_narrow"}
+                    {:label "Burglaries Last Year" :value "burglary_lsoa_hackney_narrow"}
+                    {:label "Criminal Damage Incidents Last Year" :value "criminal_damage_lsoa_hackney_narrow"}
+                    {:label "Drugs Crimes Last Year" :value "drugs_lsoa_hackney_narrow"}
+                    {:label "Other Crimes Last Year" :value "other_crime_lsoa_hackney_narrow"}
+                    {:label "Robberies Last Year" :value "robbery_lsoa_hackney_narrow"}
+                    {:label "Theft & Handling Offences Last Year" :value "theft_and_handling_lsoa_hackney_narrow"}
+                    {:label "Violence Against the Person Offences Last Year" :value "violence_lsoa_hackney_narrow"}
                     
                     ]
     :map {:lat 51.505 :lon -0.09}}))
