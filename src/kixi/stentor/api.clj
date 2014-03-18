@@ -24,7 +24,37 @@
   :available-media-types ["text/html"]
   :handle-ok "OK, I'm an API, how are you?")
 
-(io/resource (str "data/" "bydureon.js"))
+;; POI
+
+(defresource poi-data [dir handlers]
+  :available-media-types ["application/json"]
+  :exists? (fn [{{{:keys [path]} :route-params} :request}]
+             (println "dir is" dir)
+             (println "path is" path)
+             (when-let [res (io/file dir (str path ".js"))]
+               {::resource res}))
+  :handle-ok (fn [{{{:keys [path]} :route-params} :request res ::resource}]
+               (when res
+                 (-> (io/reader res)
+                     (json/parse-stream keyword)))))
+
+(defn make-poi-api-handlers [dir]
+  (let [p (promise)]
+    @(deliver p
+              {:data (poi-data dir p)})))
+
+(defn make-poi-api-routes [handlers]
+  [""
+   [[[:path] (:data handlers)]]])
+
+(defn new-poi-api-routes [dir context]
+  (assert dir "No data dir")
+  (assert (.exists (io/file dir)) (format "Directory doesn't exist: %s" dir))
+  (-> (make-poi-api-handlers dir)
+      make-poi-api-routes
+      (new-bidi-routes :context context)))
+
+;; Area
 
 (defn bucket [v min max steps]
   ;; (println (format "v: %s min: %s max: %s steps:%s scheme: %s" v min max steps scheme))
@@ -33,6 +63,7 @@
     (dec (count (remove #(< v %) buckets)))))
 
 (defn buckets [geojson]
+  (println "geojson is" geojson)
   (let [features (remove #(nil? (get-in % [:properties :v])) (:features geojson))
         vs       (map #(get-in % [:properties :v]) features)
         min-val  (reduce #(min %1 %2) vs)
@@ -50,31 +81,31 @@
                                 min-val max-val steps)))
            features)}))
 
-(defresource geojson-poi [poi-path handlers]
+(defresource area-data [dir handlers]
   :available-media-types ["application/json"]
-  :exists? (fn [{{{:keys [poi]} :route-params} :request}]
-             (when-let [res (io/file poi-path (str poi ".js"))]
+  :exists? (fn [{{{:keys [path]} :route-params} :request}]
+             (println "dir is" dir)
+             (println "path is" path)
+             (when-let [res (io/file dir (str path ".js"))]
                {::resource res}))
-  :handle-ok (fn [{{{:keys [poi]} :route-params} :request res ::resource}]
+  :handle-ok (fn [{{{:keys [path]} :route-params} :request res ::resource}]
                (when res
                  (-> (io/reader res)
                      (json/parse-stream keyword)
                      buckets))))
 
-(defn make-api-handlers [poi-path]
+(defn make-area-api-handlers [dir]
   (let [p (promise)]
     @(deliver p
-              {:index (index p)
-               :geojson-poi (geojson-poi poi-path p)})))
+              {:data (area-data dir p)})))
 
-(defn make-api-routes [handlers]
-  ["/"
-   [["index" (:index handlers)]
-    [["geojson-poi/" :poi] (:geojson-poi handlers)]]])
+(defn make-area-api-routes [handlers]
+  [""
+   [[[:path] (:data handlers)]]])
 
-(defn new-api-routes [poi-path]
-  (assert poi-path "No poi-path")
-  (assert (.exists (io/file poi-path)) (format "Directory doesn't exist: %s" poi-path))
-  (-> (make-api-handlers poi-path)
-      make-api-routes
-      (new-bidi-routes :context "/data")))
+(defn new-area-api-routes [dir context]
+  (assert dir "No data dir")
+  (assert (.exists (io/file dir)) (format "Directory doesn't exist: %s" dir))
+  (-> (make-area-api-handlers dir)
+      make-area-api-routes
+      (new-bidi-routes :context context)))

@@ -18,7 +18,7 @@
 
    ;; Stentor custom components
    [kixi.stentor.core :refer (new-main-routes)]
-   [kixi.stentor.api :refer (new-api-routes)]
+   [kixi.stentor.api :refer (new-poi-api-routes new-area-api-routes)]
    [kixi.stentor.cljs :refer (new-cljs-routes)]
 
    ;; Modular reusable components
@@ -103,7 +103,8 @@
          :web-server (new-webserver (:web-server cfg))
          :bidi-ring-handler (new-bidi-ring-handler-provider)
          :main-routes (new-main-routes)
-         :api-routes (new-api-routes (:geojson-poi-data cfg))
+         :poi-api-routes (new-poi-api-routes (get-in cfg [:data-dir :poi]) "/data/geojson-poi/")
+         :area-api-routes (new-area-api-routes (get-in cfg [:data-dir :area]) "/data/geojson-area/")
          :cljs-routes (new-cljs-routes (:cljs-builder cfg))
          :cljs-builder (new-cljs-builder)
          )

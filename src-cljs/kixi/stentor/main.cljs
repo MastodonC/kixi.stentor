@@ -29,7 +29,14 @@
 (def app-model
   (atom
    {:poi-layer nil
-    :poi-selector [{:label "Hackney Unemployment" :value "hackney-employment"}]
+    :poi-selector [{:label "Bydureon" :value "bydureon"}
+                   {:label "Exenatide" :value "exenatide"}
+                   {:label "Liraglutide" :value "liraglutide"}
+                   {:label "Prucalopride" :value "prucalopride"}
+                   {:label "Rivaroxaban 15mg" :value "rivaroxaban-15"}
+                   {:label "Rivaroxaban 20mg" :value "rivaroxaban-20"}]
+    :area-layer nil
+    :area-selector [{:label "Hackney Unemployment" :value "hackney-employment"}]
     :map {:lat 51.505 :lon -0.09}}))
 
 (def tile-url "http://{s}.tile.cloudmade.com/84b48bab1db44fb0a70c83bfc087b616/997/256/{z}/{x}/{y}.png")
@@ -71,42 +78,83 @@
         _     (println "scheme: " scheme " steps-key: " steps " idx-key: " idx " color: " color)]
     color))
 
+(defn change-points [data]
+  (fn [e]
+    (let [value (.-value (.-target e))]
+      ;; TODO don't use json GETs!! see
+      ;; https://github.com/yogthos/cljs-ajax using
+      ;; ajax-request instead of GET because Julian says
+      ;; to due to a bug, see discussion here:
+      ;; https://github.com/yogthos/cljs-ajax/issues/38
+      (if (= value "None")
+        (om/update! data :poi-layer-to-remove (:poi-layer @data))
+        (GET (str  "/data/geojson-poi/" value)
+            {:handler (fn [body]
+                        (let [json (clj->js body)
+                              layer (-> js/L (.geoJson
+                                              json
+                                              (js-obj "style"
+                                                      (fn [feature]
+                                                        (js-obj "fillColor"
+                                                                (color/brewer :PuR 7 (aget feature "properties" "bucket"))
+                                                                "weight" 1
+                                                                "color" "#eee"
+                                                                "fillOpacity" 0.8))
+                                                      )))]
+                          (om/update! data :poi-layer-to-remove (:poi-layer @data))
+                          (om/update! data :poi-layer-to-add layer)))
+             :response-format :json})))))
+
+;; TODO - brutal copy-and-paste - better to duplicate than get the wrong abstraction
+(defn change-area [data]
+  (fn [e]
+    (let [value (.-value (.-target e))]
+      ;; TODO don't use json GETs!! see
+      ;; https://github.com/yogthos/cljs-ajax using
+      ;; ajax-request instead of GET because Julian says
+      ;; to due to a bug, see discussion here:
+      ;; https://github.com/yogthos/cljs-ajax/issues/38
+      (if (= value "None")
+        (om/update! data :area-layer-to-remove (:area-layer @data))
+        (GET (str  "/data/geojson-area/" value)
+            {:handler (fn [body]
+                        (let [json (clj->js body)
+                              layer (-> js/L (.geoJson
+                                              json
+                                              (js-obj "style"
+                                                      (fn [feature]
+                                                        (js-obj "fillColor"
+                                                                (color/brewer :PuR 7 (aget feature "properties" "bucket"))
+                                                                "weight" 1
+                                                                "color" "#eee"
+                                                                "fillOpacity" 0.8))
+                                                      )))]
+                          (om/update! data :area-layer-to-remove (:area-layer @data))
+                          (om/update! data :area-layer-to-add layer)))
+             :response-format :json})))))
+
 (defn points-of-interest [data owner]
   (reify
     om/IRenderState
     (render-state [this state]
       (html
        [:section
-        [:h2 "Areas"]
-        [:select
-         {:onChange
-          (fn [e]
-            (let [value (.-value (.-target e))]
-              ;; TODO don't use json GETs!! see
-              ;; https://github.com/yogthos/cljs-ajax using
-              ;; ajax-request instead of GET because Julian says
-              ;; to due to a bug, see discussion here:
-              ;; https://github.com/yogthos/cljs-ajax/issues/38
-              (if (= value "None")
-                (om/update! data :poi-layer-to-remove (:poi-layer @data))
-                (GET (str "/data/geojson-poi/" value)
-                     {:handler (fn [body]
-                                 (let [json (clj->js body)
-                                       layer (-> js/L (.geoJson
-                                                       json
-                                                       (js-obj "style"
-                                                               (fn [feature]
-                                                                 (js-obj "fillColor"
-                                                                         (color/brewer :PuR 7 (aget feature "properties" "bucket"))
-                                                                         "weight" 1
-                                                                         "color" "#eee"
-                                                                         "fillOpacity" 0.8))
-                                                               )))]
-                                   (om/update! data :poi-layer-to-remove (:poi-layer @data))
-                                   (om/update! data :poi-layer-to-add layer)))
-                      :response-format :json}))))}
+        [:h2 "Points of interest"]
+        [:select {:onChange (change-points data)}
          [:option "None"]
          (for [{:keys [label value]} (:poi-selector data)]
+           [:option {:value value} label])]]))))
+
+(defn area [data owner]
+  (reify
+    om/IRenderState
+    (render-state [this state]
+      (html
+       [:section
+        [:h2 "Areas"]
+        [:select {:onChange (change-area data)}
+         [:option "None"]
+         (for [{:keys [label value]} (:area-selector data)]
            [:option {:value value} label])]]))))
 
 (defn pan-to-postcode [data owner]
@@ -171,6 +219,7 @@
       (html
        [:div
         (om/build points-of-interest app-state)
+        (om/build area app-state)
         (om/build postcode-selector app-state)
         (om/build map-saver app-state)]))))
 
@@ -199,8 +248,7 @@
       (let [node (om/get-node owner)
             {:keys [leaflet-map] :as map} (om/get-state owner :map)
             loc {:lon (get-in app-state [:map :lon])
-                 :lat (get-in app-state [:map :lat])}
-            ]
+                 :lat (get-in app-state [:map :lat])}]
         (.panTo leaflet-map (clj->js loc))
 
         (when-let [layer (:poi-layer-to-remove app-state)]
@@ -208,10 +256,20 @@
           (om/update! app-state :poi-layer-to-remove nil)
           (om/update! app-state :poi-layer nil))
 
+        (when-let [layer (:area-layer-to-remove app-state)]
+          (.removeLayer leaflet-map layer)
+          (om/update! app-state :area-layer-to-remove nil)
+          (om/update! app-state :area-layer nil))
+
         (when-let [layer (:poi-layer-to-add app-state)]
           (.addLayer leaflet-map layer)
           (om/update! app-state :poi-layer-to-add nil)
-          (om/update! app-state :poi-layer layer))))))
+          (om/update! app-state :poi-layer layer))
+
+        (when-let [layer (:area-layer-to-add app-state)]
+          (.addLayer leaflet-map layer)
+          (om/update! app-state :area-layer-to-add nil)
+          (om/update! app-state :area-layer layer))))))
 
 (om/root map-component app-model {:target (. js/document (getElementById "mappy"))})
 (om/root panel-component app-model {:target (. js/document (getElementById "panel"))})
