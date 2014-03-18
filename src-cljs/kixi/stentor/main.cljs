@@ -274,4 +274,5 @@
 (om/root map-component app-model {:target (. js/document (getElementById "mappy"))})
 (om/root panel-component app-model {:target (. js/document (getElementById "panel"))})
 
-(om/root ankha/inspector app-model {:target (.getElementById js/document "debug")})
+;; (om/root ankha/inspector app-model {:target (.getElementById js/document "debug")})
+
