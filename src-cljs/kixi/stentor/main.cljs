@@ -178,7 +178,7 @@
     (init-state [this]
       {:in (chan (sliding-buffer 1))
        :out (chan (sliding-buffer 1))
-       :initialPostCode "N16 6SB"})
+       :initialPostCode "E8 1LA"}) ;; Hackney Downs
 
     om/IWillMount
     (will-mount [this]
