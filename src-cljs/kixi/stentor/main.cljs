@@ -33,7 +33,8 @@
                    {:label "Overcrowding (Anonymous)" :value "overcrowding_anon"}
                    {:label "Rent Arrears (Anonymous)" :value "rent_arrears_anon"}
                    {:label "Tenure (Anonymous)" :value "tenure_anon"}
-                   {:label "Underoccupancy (Anonymous)" :value "underoccupancy_anon"}]
+                   {:label "Underoccupancy (Anonymous)" :value "underoccupancy_anon"}
+                   {:label "Hackney Schools" :value "schools_hackney"}]
     :area-layer nil
     :area-selector [{:label "Hackney Unemployment" :value "hackney-employment"}]
     :map {:lat 51.505 :lon -0.09}}))
