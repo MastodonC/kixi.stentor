@@ -19,7 +19,7 @@
    [clojure.string :as string]
    [sablono.core :as html :refer-macros [html]]
    [cljs.core.async :refer [<! >! chan put! sliding-buffer close! pipe map< filter< mult tap map>]]
-   [ajax.core :refer (GET ajax-request)]
+   [ajax.core :refer (GET PUT ajax-request)]
    [ankha.core :as ankha]
    [kixi.stentor.colorbrewer :as color]
    [goog.events :as events]))
