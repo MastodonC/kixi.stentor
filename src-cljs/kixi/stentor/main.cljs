@@ -36,6 +36,7 @@
                    {:label "Percentage Houses Underoccupied" :value "underoccupancy_anon"}
                    {:label "School Pupil Numbers" :value "schools_hackney"}]
     :area-layer nil
+
     :area-selector [;; Acommodation
                     {:label "Percent Unemployed" :value "hackney-employment"}
                     {:label "Percent Flats (vs Houses)" :value "accommodationtype_oa_hackney"}
@@ -60,9 +61,13 @@
                     {:label "Robberies Last Year" :value "robbery_lsoa_hackney_narrow"}
                     {:label "Theft & Handling Offences Last Year" :value "theft_and_handling_lsoa_hackney_narrow"}
                     {:label "Violence Against the Person Offences Last Year" :value "violence_lsoa_hackney_narrow"}
-                    
+
                     ]
-    :map {:lat 51.505 :lon -0.09}}))
+    :maps []
+
+    :leaflet-map nil ; authoritative
+    :map {:lat 52.505 :lng -0.09} ; not authoritative
+}))
 
 (def tile-url "http://{s}.tile.cloudmade.com/84b48bab1db44fb0a70c83bfc087b616/997/256/{z}/{x}/{y}.png")
 
@@ -128,7 +133,7 @@
                                                   "opacity" 0.8
                                                   "color" "#08306b"
                                                   "fillOpacity" 0.8))
-                                               
+
                                                "pointToLayer"
                                                (fn [feature latlng]
                                                  (-> js/L
@@ -313,4 +318,3 @@
 (om/root panel-component app-model {:target (. js/document (getElementById "panel"))})
 
 ;; (om/root ankha/inspector app-model {:target (.getElementById js/document "debug")})
-
