@@ -75,7 +75,7 @@
   [cursor id]
   (let [m (-> js/L
               (.map id)
-              (.setView (array (:lat cursor) (:lon cursor)) 13))
+              (.setView (array (:lat cursor) (:lng cursor)) 13))
         tiles (-> js/L (.tileLayer
                         tile-url
                         {:maxZoom 16
@@ -204,11 +204,14 @@
                     (let [lat (get-in body [(str "http://data.ordnancesurvey.co.uk/id/postcodeunit/" postcode)
                                             "http://www.w3.org/2003/01/geo/wgs84_pos#lat"
                                             0 "value"])
-                          lon (get-in body [(str "http://data.ordnancesurvey.co.uk/id/postcodeunit/" postcode)
+                          lng (get-in body [(str "http://data.ordnancesurvey.co.uk/id/postcodeunit/" postcode)
                                             "http://www.w3.org/2003/01/geo/wgs84_pos#long"
                                             0 "value"])]
-                      (om/update! data [:map :lat] (js/parseFloat lat))
-                      (om/update! data [:map :lon] (js/parseFloat lon))))
+                      (.panTo (:leaflet-map @data) (clj->js {:lat (js/parseFloat lat)
+                                                             :lng (js/parseFloat lng)}))
+                      ;;(om/update! data [:map :lat] (js/parseFloat lat))
+                      ;;(om/update! data [:map :lng] (js/parseFloat lng))
+                      ))
 
          :response-format :json})))
 
@@ -239,6 +242,26 @@
          {:onClick (fn [_] (pan-to-postcode data owner))}
          "Go"]]))))
 
+(defn get-maps [data]
+  (GET "/maps"
+      {:response-format :edn
+       :handler #(om/update! data :maps %)}))
+
+(defn save-map [data owner]
+  (println "saving map, center of map is" (.getCenter (:leaflet-map @data)))
+
+  (let [center (.getCenter (:leaflet-map @data))
+        body (pr-str {:latlng [(.-lat center) (.-lng center)] :zoom 13 :poi :foo :area :bar})]
+    (println "body is" body)
+    (PUT (str "/maps/" (.toLowerCase (string/replace (om/get-state owner :mapname) #"[\s]+" "")))
+        {;; Even though there is no response body, we need to set the
+         ;; response-format to raw otherwise the handler doesn't get
+         ;; called.
+         :response-format :raw
+         :params {:latlng [(.-lat center) (.-lng center)] :zoom 13 :poi :foo :area :bar}
+         :format :edn
+         :handler (fn [_] (get-maps data))})))
+
 (defn map-saver [data owner]
   (reify
     om/IRenderState
@@ -247,13 +270,36 @@
        [:section
         [:h2 "Save current map"]
         [:label {:for "maplabel-input"} "Save As"]
-        [:input {:id "maplabel-input" :type "text"}]
-        [:button {:onClick (fn [_] (println "TODO: save map!"))} "Save"]]
+        [:input {:id "maplabel-input"
+                 :type "text"
+                 :onChange (fn [e]
+                             (om/set-state! owner :mapname (.-value (.-target e))))
+                 :onKeyPress (fn [e] (when (= (.-keyCode e) 13)
+                                       (save-map data owner)))}]
+        [:button {:onClick (fn [_] (save-map data owner))} "Save"]]
        ))))
+
+(defn map-loader [data owner]
+  (reify
+    om/IDidMount
+    (did-mount [this] (get-maps data))
+    om/IRenderState
+    (render-state [this state]
+      (html
+       [:section
+        [:h2 "Load maps"]
+        (for [m (:maps data)]
+          [:p [:a {:href "#"
+                   :onClick (fn [e]
+                              (.panTo (:leaflet-map @data)
+                                      (clj->js (zipmap [:lat :lng] (:latlng m))))
+                              (.preventDefault e))}
+               (:map m)]])]))))
 
 (defn panel-component
   [app-state owner]
   (reify
+
     om/IRender
     (render [this]
       (html
@@ -261,10 +307,8 @@
         (om/build points-of-interest app-state)
         (om/build area app-state)
         (om/build postcode-selector app-state)
-        (om/build map-saver app-state)]))))
-
-;; http://data.ordnancesurvey.co.uk/doc/postcodeunit/HA99HD.json
-;;                     [51.505, -0.09]
+        (om/build map-saver app-state)
+        (om/build map-loader app-state)]))))
 
 (defn map-component
   "put the leaflet map as state in the om component"
@@ -278,18 +322,31 @@
     om/IDidMount
     (did-mount [this]
       (let [node (om/get-node owner)
-            {:keys [leaflet-map] :as map} (create-map (:map app-state) node)]
-        (.on leaflet-map "click" (fn [ev] (.dir js/console ev)))
+            {:keys [leaflet-map] :as map} (create-map (:map app-state) node)
+            loc {:lng (get-in app-state [:map :lng])
+                 :lat (get-in app-state [:map :lat])}]
 
-        (om/set-state! owner :map map)))
+        ;;(.on leaflet-map "click" (fn [ev] (.dir js/console ev)))
+        (.on leaflet-map "moveend" (fn [ev]
+                                     (let [center (.getCenter leaflet-map)]
+                                       (.dir js/console center)
+                                       (om/update! app-state [:map :lng] (.-lng center))
+                                       (om/update! app-state [:map :lat] (.-lat center)))
+                                     ))
+
+        (.panTo leaflet-map (clj->js loc))
+
+        (om/set-state! owner :map map)
+
+        (om/update! app-state :leaflet-map leaflet-map)
+        ))
 
     om/IDidUpdate
     (did-update [this prev-props prev-state]
+      (println "map-component did-update")
+
       (let [node (om/get-node owner)
-            {:keys [leaflet-map] :as map} (om/get-state owner :map)
-            loc {:lon (get-in app-state [:map :lon])
-                 :lat (get-in app-state [:map :lat])}]
-        (.panTo leaflet-map (clj->js loc))
+            {:keys [leaflet-map] :as map} (om/get-state owner :map)]
 
         (when-let [layer (:poi-layer-to-remove app-state)]
           (.removeLayer leaflet-map layer)
