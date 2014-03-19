@@ -304,7 +304,10 @@
         (when-let [layer (:area-layer-to-add app-state)]
           (.addLayer leaflet-map layer)
           (om/update! app-state :area-layer-to-add nil)
-          (om/update! app-state :area-layer layer))))))
+          (om/update! app-state :area-layer layer))
+
+        (when-let [layer (:poi-layer app-state)]
+          (.bringToFront layer))))))
 
 (om/root map-component app-model {:target (. js/document (getElementById "mappy"))})
 (om/root panel-component app-model {:target (. js/document (getElementById "panel"))})
