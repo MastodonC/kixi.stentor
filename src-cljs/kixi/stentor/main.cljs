@@ -132,7 +132,7 @@
                                                   "weight" 1
                                                   "opacity" 0.8
                                                   "color" "#08306b"
-                                                  "fillOpacity" 0.8))
+                                                  "fillOpacity" 0.6))
 
                                                "pointToLayer"
                                                (fn [feature latlng]
