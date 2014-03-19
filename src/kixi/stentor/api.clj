@@ -15,10 +15,13 @@
 (ns kixi.stentor.api
   (:require
    [clojure.java.io :as io]
-   [modular.bidi :refer (new-bidi-routes)]
+   [modular.bidi :refer (new-bidi-routes BidiRoutesContributor)]
    [liberator.core :refer (defresource)]
    [cheshire.core :as json]
-   [kixi.stentor.colorbrewer :as color]))
+   [kixi.stentor.colorbrewer :as color]
+   [clojure.edn :as edn]
+   [com.stuartsierra.component :as component]
+   [kixi.stentor.database :refer (store-map! get-map index)]))
 
 ;; Bucketing
 (defn bucket [v min max steps]
@@ -44,10 +47,6 @@
                         (bucket (get-in feature [:properties :v])
                                 min-val max-val steps)))
            features)}))
-
-(defresource index [handlers]
-  :available-media-types ["text/html"]
-  :handle-ok "OK, I'm an API, how are you?")
 
 ;; POI
 
@@ -110,3 +109,50 @@
   (-> (make-area-api-handlers dir)
       make-area-api-routes
       (new-bidi-routes :context context)))
+
+
+;; Load/Save maps
+
+(defresource maps-index [handlers database]
+  :available-media-types ["application/edn"]
+  :handle-ok (fn [_]
+               (for [map (index database)]
+                 (assoc (get-map database map) :map map)
+                 )
+               ))
+
+(defresource maps-item [handlers database]
+  :allowed-methods #{:get :put}
+  :available-media-types ["application/edn"]
+  :handle-ok "Here's a map"
+  :exists? true
+  :put! (fn [{{{:keys [map]} :route-params body :body} :request}]
+          (let [body (slurp body)]
+            (println "Putting a new map in the database:" map body)
+            (let [data (edn/read-string body)]
+              (store-map! database map data)))))
+
+(defn make-maps-api-handlers [database]
+  (let [p (promise)]
+    @(deliver p
+              {:index (maps-index p database)
+               :map (maps-item p database)})))
+
+(defn make-maps-api-routes [handlers]
+  ["" [["" (:index handlers)]
+       [["/" :map] (:map handlers)]]])
+
+(defrecord MainRoutes [context]
+  component/Lifecycle
+  (start [this]
+    (if-let [database (get-in this [:database])]
+      (assoc this :routes (make-maps-api-routes (make-maps-api-handlers database)))
+      (throw (ex-info "No database!" {:this this}))))
+  (stop [this] this)
+
+  BidiRoutesContributor
+  (routes [this] (:routes this))
+  (context [this] context))
+
+(defn new-maps-api-routes [context]
+  (->MainRoutes context))

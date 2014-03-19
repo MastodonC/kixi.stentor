@@ -18,16 +18,22 @@
 
    ;; Stentor custom components
    [kixi.stentor.core :refer (new-main-routes)]
-   [kixi.stentor.api :refer (new-poi-api-routes new-area-api-routes)]
+   [kixi.stentor.api :refer (new-poi-api-routes new-area-api-routes new-maps-api-routes)]
    [kixi.stentor.cljs :refer (new-cljs-routes)]
 
    ;; Modular reusable components
    [modular.core :as mod]
+   modular.protocols
    [modular.http-kit :refer (new-webserver)]
    [modular.bidi :refer (new-bidi-ring-handler-provider)]
    ;; [modular.cljs-builder :refer (new-cljs-builder)]
 
    [shadow.cljs.build :as cljs]
+
+   [kixi.stentor.database :refer (Database)]
+
+   ;; Accessing the API as a client
+   [org.httpkit.client :refer (request) :rename {request http-request}]
 
    ;; Misc
    clojure.tools.reader
@@ -96,6 +102,35 @@
 (defn new-cljs-builder []
   (->ClojureScriptBuilder))
 
+(defrecord TestData []
+  component/Lifecycle
+  (start [this]
+    (println "Load test data")
+    (println @(http-request
+              {:method :put
+               :url "http://localhost:8010/maps/city"
+               :headers {"Accept" "application/edn"}
+               :body (pr-str {:latlng [51.505 -0.09] :zoom 13 :poi :foo :area :bar})
+               }
+              :status))
+    (println @(http-request
+              {:method :get
+               :url "http://localhost:8010/maps"
+               :headers {"Accept" "application/edn"}
+               }
+              (comp slurp :body)))
+    this)
+  (stop [this] this))
+
+(defrecord AtomBackedDatabase []
+  component/Lifecycle
+  (start [this] (assoc this :store (atom {})))
+  (stop [this] this)
+  Database
+  (store-map! [this name data]
+    (swap! (:store this) assoc name data))
+  (get-map [this name] (get @(:store this) name))
+  (index [this] (keys @(:store this))))
 
 (defn new-system []
   (let [cfg (config)]
@@ -105,7 +140,12 @@
          :main-routes (new-main-routes)
          :poi-api-routes (new-poi-api-routes (get-in cfg [:data-dir :poi]) "/data/geojson-poi/")
          :area-api-routes (new-area-api-routes (get-in cfg [:data-dir :area]) "/data/geojson-area/")
+         :maps-api-routes (new-maps-api-routes "/maps")
          :cljs-routes (new-cljs-routes (:cljs-builder cfg))
+         :database (->AtomBackedDatabase)
          :cljs-builder (new-cljs-builder)
+         :test-data (->TestData)
          )
-        (mod/system-using {:cljs-routes [:cljs-builder]}))))
+        (mod/system-using {:cljs-routes [:cljs-builder]
+                           :test-data [:web-server]
+                           :maps-api-routes [:database]}))))
