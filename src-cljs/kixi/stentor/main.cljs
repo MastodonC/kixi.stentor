@@ -211,8 +211,9 @@
                           lng (get-in body [(str "http://data.ordnancesurvey.co.uk/id/postcodeunit/" postcode)
                                             "http://www.w3.org/2003/01/geo/wgs84_pos#long"
                                             0 "value"])]
-                      (.panTo (:leaflet-map @data) (clj->js {:lat (js/parseFloat lat)
-                                                             :lng (js/parseFloat lng)}))))
+                      (when-let [map (:leaflet-map @data)]
+                        (.panTo map (clj->js {:lat (js/parseFloat lat)
+                                              :lng (js/parseFloat lng)})))))
 
          :response-format :json})))
 
@@ -255,11 +256,16 @@
        ;; response-format to raw otherwise the handler doesn't get
        ;; called.
        :response-format :raw
-       :params (let [lmap (:leaflet-map @data)
-                     center (.getCenter lmap)
-                     zoom (.getZoom lmap)]
-                 {:latlng [(.-lat center) (.-lng center)]
-                  :zoom zoom
+       :params (if-let [lmap (:leaflet-map @data)]
+                 (let [center (.getCenter lmap)
+                       zoom (.getZoom lmap)]
+                   {:latlng [(.-lat center) (.-lng center)]
+                    :zoom zoom
+                    :poi (:poi-layer-value @data)
+                    :area (:area-layer-value @data)})
+                 ;; A version that can run without a map component present
+                 {:latlng [50 0]
+                  :zoom 10
                   :poi (:poi-layer-value @data)
                   :area (:area-layer-value @data)})
        :format :edn
@@ -280,9 +286,9 @@
        ))))
 
 (defn load-map [data m]
-  (.panTo (:leaflet-map @data)
-          (clj->js (zipmap [:lat :lng] (:latlng m))))
-  (.setZoom (:leaflet-map @data) (:zoom m))
+  (when-let [map (:leaflet-map @data)]
+    (.panTo map (clj->js (zipmap [:lat :lng] (:latlng m))))
+    (.setZoom map (:zoom m)))
   (let [val (:poi m)]
     (om/update! data :poi-layer-value val)
     (update-poi data val))
