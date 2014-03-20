@@ -30,24 +30,31 @@
   (atom
    {:poi-layer-value nil
     :poi-layer nil
-    :poi-selector [{:label "Hackney Real Time Complaints" :value "hackney_complaints_locations_anon"}
+    :poi-selector [;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                   ;; Hackney
+                   {:label "Hackney Real Time Complaints" :value "hackney_complaints_locations_anon"}
                    {:label "Hackney Percentage Houses Overcrowded" :value "hackney_overcrowding_anon"}
                    {:label "Hackney Percentage Houses in Rent Arrears" :value "hackney_rent_arrears_anon"}
                    {:label "Hackney Median Tenure in Years" :value "hackney_tenure_anon"}
                    {:label "Hackney Percentage Houses Underoccupied" :value "hackney_underoccupancy_anon"}
-                   {:label "Hackney School Pupil Numbers" :value "hackney_schools_hackney"}]
+                   {:label "Hackney School Pupil Numbers" :value "hackney_schools_hackney"}
+
+                   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                   ;; Cambs
+                   {:label "Cambridgeshire Library Computer Use Last Year" :value "cambs_library_computeruse_lastyear"}]
 
     :area-layer-value nil
     :area-layer nil
-    :area-selector [;; Acommodation
+    :area-selector [;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                    ;; Hackney
                     {:label "Hackney Percent Unemployed" :value "hackney_employment"}
+                    
+                    ;; Acommodation
                     {:label "Hackney Percent Flats (vs Houses)" :value "hackney_accommodationtype_oa_hackney"}
                     {:label "Hackney Percent Overoccupied" :value "hackney_occupancy_oa_hackney"}
-
-                    ;; Schools
                     {:label "Hackney Percent Social Rented" :value "hackney_tenure_oa_hackney"}
 
-                    ;; Warm
+                    ;; WARM
                     {:label "Hackney Belonging (WARM)" :value "hackney_belonging_oa_hackney"}
                     {:label "Hackney Community Cohesion (WARM)" :value "hackney_communitycohesion_lsoa_hackney"}
                     {:label "Hackney Community Safety (WARM)" :value "hackney_communitysafety_lsoa_hackney"}
@@ -63,6 +70,27 @@
                     {:label "Hackney Robberies Last Year" :value "hackney_robbery_lsoa_hackney_narrow"}
                     {:label "Hackney Theft & Handling Offences Last Year" :value "hackney_theft_and_handling_lsoa_hackney_narrow"}
                     {:label "Hackney Violence Against the Person Offences Last Year" :value "hackney_violence_lsoa_hackney_narrow"}
+                    
+                    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                    ;; Cambridgeshire
+                    {:label "Cambridgeshire Broadband Speed" :value "cambs_broadband_speed"}
+                    {:label "Cambridgeshire Percent Unemployment" :value "cambs_employment_cambridge"}
+                    {:label "Cambridgeshire National Insurance Registrations" :value "cambs_nino_cambridge"}
+                    
+                    ;; Accommodation
+                    {:label "Cambridgeshire Percent Flats (vs Houses)" :value "cambs_accommodation_type_cambridge"}
+                    {:label "Cambridgeshire Percent Overoccupied" :value "cambs_occupancy_cambridge"}
+                    {:label "Cambridgeshire Percent Social Rented" :value "cambs_tenure_cambridge"}
+
+                    ;; WARM
+                    {:label "Cambridgeshire Belonging (WARM)" :value "cambs_belonging_cambridge"}
+                    {:label "Cambridgeshire Community Cohesion (WARM)" :value "cambs_communitycohesion_cambridge"}
+                    {:label "Cambridgeshire Community Safety (WARM)" :value "cambs_communitysafety_cambridge"}
+                    {:label "Cambridgeshire Resilience (WARM)" :value "cambs_resilience_cambridge"}
+                    {:label "Cambridgeshire Taking Part" :value "cambs_takingpart_cambridge"}
+                    
+                    ;; Crime
+                    
                     ]
     :maps []
 
