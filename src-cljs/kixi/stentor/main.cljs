@@ -30,39 +30,39 @@
   (atom
    {:poi-layer-value nil
     :poi-layer nil
-    :poi-selector [{:label "Real Time Complaints" :value "complaints_locations_anon"}
-                   {:label "Percentage Houses Overcrowded" :value "overcrowding_anon"}
-                   {:label "Percentage Houses in Rent Arrears" :value "rent_arrears_anon"}
-                   {:label "Median Tenure in Years" :value "tenure_anon"}
-                   {:label "Percentage Houses Underoccupied" :value "underoccupancy_anon"}
-                   {:label "School Pupil Numbers" :value "schools_hackney"}]
+    :poi-selector [{:label "Hackney Real Time Complaints" :value "hackney_complaints_locations_anon"}
+                   {:label "Hackney Percentage Houses Overcrowded" :value "hackney_overcrowding_anon"}
+                   {:label "Hackney Percentage Houses in Rent Arrears" :value "hackney_rent_arrears_anon"}
+                   {:label "Hackney Median Tenure in Years" :value "hackney_tenure_anon"}
+                   {:label "Hackney Percentage Houses Underoccupied" :value "hackney_underoccupancy_anon"}
+                   {:label "Hackney School Pupil Numbers" :value "hackney_schools_hackney"}]
 
     :area-layer-value nil
     :area-layer nil
     :area-selector [;; Acommodation
-                    {:label "Percent Unemployed" :value "hackney-employment"}
-                    {:label "Percent Flats (vs Houses)" :value "accommodationtype_oa_hackney"}
-                    {:label "Percent Overoccupied" :value "occupancy_oa_hackney"}
+                    {:label "Hackney Percent Unemployed" :value "hackney_employment"}
+                    {:label "Hackney Percent Flats (vs Houses)" :value "hackney_accommodationtype_oa_hackney"}
+                    {:label "Hackney Percent Overoccupied" :value "hackney_occupancy_oa_hackney"}
 
                     ;; Schools
-                    {:label "Percent Social Rented" :value "tenure_oa_hackney"}
+                    {:label "Hackney Percent Social Rented" :value "hackney_tenure_oa_hackney"}
 
                     ;; Warm
-                    {:label "Belonging (WARM)" :value "belonging_oa_hackney"}
-                    {:label "Community Cohesion (WARM)" :value "communitycohesion_lsoa_hackney"}
-                    {:label "Community Safety (WARM)" :value "communitysafety_lsoa_hackney"}
-                    {:label "Resilience (WARM)" :value "resilience_oa_hackney"}
-                    {:label "Taking Part (WARM)" :value "takingpart_lsoa_hackney"}
+                    {:label "Hackney Belonging (WARM)" :value "hackney_belonging_oa_hackney"}
+                    {:label "Hackney Community Cohesion (WARM)" :value "hackney_communitycohesion_lsoa_hackney"}
+                    {:label "Hackney Community Safety (WARM)" :value "hackney_communitysafety_lsoa_hackney"}
+                    {:label "Hackney Resilience (WARM)" :value "hackney_resilience_oa_hackney"}
+                    {:label "Hackney Taking Part (WARM)" :value "hackney_takingpart_lsoa_hackney"}
 
                     ;; Crime
-                    {:label "Total Crimes Last Year" :value "crime_summary_lsoa_hackney_narrow"}
-                    {:label "Burglaries Last Year" :value "burglary_lsoa_hackney_narrow"}
-                    {:label "Criminal Damage Incidents Last Year" :value "criminal_damage_lsoa_hackney_narrow"}
-                    {:label "Drugs Crimes Last Year" :value "drugs_lsoa_hackney_narrow"}
-                    {:label "Other Crimes Last Year" :value "other_crime_lsoa_hackney_narrow"}
-                    {:label "Robberies Last Year" :value "robbery_lsoa_hackney_narrow"}
-                    {:label "Theft & Handling Offences Last Year" :value "theft_and_handling_lsoa_hackney_narrow"}
-                    {:label "Violence Against the Person Offences Last Year" :value "violence_lsoa_hackney_narrow"}
+                    {:label "Hackney Total Crimes Last Year" :value "hackney_crime_summary_lsoa_hackney_narrow"}
+                    {:label "Hackney Burglaries Last Year" :value "hackney_burglary_lsoa_hackney_narrow"}
+                    {:label "Hackney Criminal Damage Incidents Last Year" :value "hackney_criminal_damage_lsoa_hackney_narrow"}
+                    {:label "Hackney Drugs Crimes Last Year" :value "hackney_drugs_lsoa_hackney_narrow"}
+                    {:label "Hackney Other Crimes Last Year" :value "hackney_other_crime_lsoa_hackney_narrow"}
+                    {:label "Hackney Robberies Last Year" :value "hackney_robbery_lsoa_hackney_narrow"}
+                    {:label "Hackney Theft & Handling Offences Last Year" :value "hackney_theft_and_handling_lsoa_hackney_narrow"}
+                    {:label "Hackney Violence Against the Person Offences Last Year" :value "hackney_violence_lsoa_hackney_narrow"}
                     ]
     :maps []
 
