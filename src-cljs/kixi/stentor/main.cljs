@@ -384,7 +384,8 @@
           (om/update! app-state :area-layer layer))
 
         (when-let [layer (:poi-layer app-state)]
-          (.bringToFront layer))))))
+          (when (.-_map layer)
+              (.bringToFront layer)))))))
 
 (om/root map-component app-model {:target (. js/document (getElementById "mappy"))})
 (om/root panel-component app-model {:target (. js/document (getElementById "panel"))})
