@@ -63,7 +63,6 @@
                     {:label "Robberies Last Year" :value "robbery_lsoa_hackney_narrow"}
                     {:label "Theft & Handling Offences Last Year" :value "theft_and_handling_lsoa_hackney_narrow"}
                     {:label "Violence Against the Person Offences Last Year" :value "violence_lsoa_hackney_narrow"}
-
                     ]
     :maps []
 
@@ -106,101 +105,98 @@
   (map> to-postcode-url ch))
 
 (defn get-color [scheme steps idx]
-  (let [color (color/brewer scheme steps idx)
-        _     (println "scheme: " scheme " steps-key: " steps " idx-key: " idx " color: " color)]
-    color))
+  (color/brewer scheme steps idx))
 
-(defn change-points [data]
-  (fn [e]
-    (let [value (.-value (.-target e))]
-      ;; TODO don't use json GETs!! see
-      ;; https://github.com/yogthos/cljs-ajax using
-      ;; ajax-request instead of GET because Julian says
-      ;; to due to a bug, see discussion here:
-      ;; https://github.com/yogthos/cljs-ajax/issues/38
-      (if (= value "None")
-        (do
-          (om/update! data :poi-layer-value nil)
-          (om/update! data :poi-layer-to-remove (:poi-layer @data)))
-        (GET (str  "/data/geojson-poi/" value)
-            {:handler (fn [body]
-                        (let [json (clj->js body)
-                              layer (-> js/L (.geoJson
-                                              json
-                                              (js-obj
-                                               "style"
-                                               (fn [feature]
-                                                 (js-obj
-                                                  "fillColor"
-                                                  (color/brewer :Blues 7 (aget feature "properties" "bucket"))
-                                                  "weight" 1
-                                                  "opacity" 0.8
-                                                  "color" "#08306b"
-                                                  "fillOpacity" 0.6))
+(defn update-poi [data value]
+  (if-not value
+    (do
+      (om/update! data :poi-layer-value nil)
+      (om/update! data :poi-layer-to-remove (:poi-layer @data)))
+    ;; TODO don't use json GETs!! see
+    ;; https://github.com/yogthos/cljs-ajax using
+    ;; ajax-request instead of GET because Julian says
+    ;; to due to a bug, see discussion here:
+    ;; https://github.com/yogthos/cljs-ajax/issues/38
+    (GET (str  "/data/geojson-poi/" value)
+        {:handler (fn [body]
+                    (let [json (clj->js body)
+                          layer (-> js/L (.geoJson
+                                          json
+                                          (js-obj
+                                           "style"
+                                           (fn [feature]
+                                             (js-obj
+                                              "fillColor"
+                                              (color/brewer :Blues 7 (aget feature "properties" "bucket"))
+                                              "weight" 1
+                                              "opacity" 0.8
+                                              "color" "#08306b"
+                                              "fillOpacity" 0.6))
 
-                                               "pointToLayer"
-                                               (fn [feature latlng]
-                                                 (-> js/L
-                                                     (.circleMarker
-                                                      latlng
-                                                      (js-obj
-                                                       "radius" 8)))))))]
-                          (om/update! data :poi-layer-value value)
-                          (om/update! data :poi-layer-to-remove (:poi-layer @data))
-                          (om/update! data :poi-layer-to-add layer)))
-             :response-format :json})))))
+                                           "pointToLayer"
+                                           (fn [feature latlng]
+                                             (-> js/L
+                                                 (.circleMarker
+                                                  latlng
+                                                  (js-obj
+                                                   "radius" 8)))))))]
+                      (om/update! data :poi-layer-value value)
+                      (om/update! data :poi-layer-to-remove (:poi-layer @data))
+                      (om/update! data :poi-layer-to-add layer)))
+         :response-format :json})))
 
-;; TODO - brutal copy-and-paste - better to duplicate than get the wrong abstraction
-(defn change-area [data]
-  (fn [e]
-    (let [value (.-value (.-target e))]
-      ;; TODO don't use json GETs!! see
-      ;; https://github.com/yogthos/cljs-ajax using
-      ;; ajax-request instead of GET because Julian says
-      ;; to due to a bug, see discussion here:
-      ;; https://github.com/yogthos/cljs-ajax/issues/38
-      (if (= value "None")
-        (do
-          (om/update! data :area-layer-value nil)
-          (om/update! data :area-layer-to-remove (:area-layer @data)))
-        (GET (str  "/data/geojson-area/" value)
-            {:handler (fn [body]
-                        (let [json (clj->js body)
-                              layer (-> js/L (.geoJson
-                                              json
-                                              (js-obj "style"
-                                                      (fn [feature]
-                                                        (js-obj "fillColor"
-                                                                (color/brewer :PuR 7 (aget feature "properties" "bucket"))
-                                                                "weight" 1
-                                                                "color" "#eee"
-                                                                "fillOpacity" 0.8))
-                                                      )))]
-                          (om/update! data :area-layer-value value)
-                          (om/update! data :area-layer-to-remove (:area-layer @data))
-                          (om/update! data :area-layer-to-add layer)))
-             :response-format :json})))))
+(defn update-area [data value]
+  (if-not value
+    (do
+      (om/update! data :area-layer-value nil)
+      (om/update! data :area-layer-to-remove (:area-layer @data)))
+    ;; TODO don't use json GETs!! see
+    ;; https://github.com/yogthos/cljs-ajax using
+    ;; ajax-request instead of GET because Julian says
+    ;; to due to a bug, see discussion here:
+    ;; https://github.com/yogthos/cljs-ajax/issues/38
+    (GET (str  "/data/geojson-area/" value)
+        {:handler (fn [body]
+                    (let [json (clj->js body)
+                          layer (-> js/L (.geoJson
+                                          json
+                                          (js-obj "style"
+                                                  (fn [feature]
+                                                    (js-obj "fillColor"
+                                                            (color/brewer :PuR 7 (aget feature "properties" "bucket"))
+                                                            "weight" 1
+                                                            "color" "#eee"
+                                                            "fillOpacity" 0.8))
+                                                  )))]
+                      (om/update! data :area-layer-value value)
+                      (om/update! data :area-layer-to-remove (:area-layer @data))
+                      (om/update! data :area-layer-to-add layer)))
+         :response-format :json})))
 
-(defn points-of-interest [data owner]
+(defn points-of-interest-component [data owner]
   (reify
     om/IRenderState
     (render-state [this state]
       (html
        [:section
         [:h2 "Points of interest"]
-        [:select {:onChange (change-points data)}
+        [:select {:onChange (fn [e] (let [val (let [v (.-value (.-target e))] (if (= v "None") nil v))]
+                                      (update-poi data val)))
+                  :value (:poi-layer-value data)}
          [:option "None"]
          (for [{:keys [label value]} (:poi-selector data)]
            [:option {:value value} label])]]))))
 
-(defn area [data owner]
+(defn area-component [data owner]
   (reify
     om/IRenderState
     (render-state [this state]
       (html
        [:section
         [:h2 "Areas"]
-        [:select {:onChange (change-area data)}
+        [:select {:onChange (fn [e] (let [val (let [v (.-value (.-target e))] (if (= v "None") nil v))]
+                                      (update-area data val)))
+                  :value (:area-layer-value data)}
          [:option "None"]
          (for [{:keys [label value]} (:area-selector data)]
            [:option {:value value} label])]]))))
@@ -216,14 +212,11 @@
                                             "http://www.w3.org/2003/01/geo/wgs84_pos#long"
                                             0 "value"])]
                       (.panTo (:leaflet-map @data) (clj->js {:lat (js/parseFloat lat)
-                                                             :lng (js/parseFloat lng)}))
-                      ;;(om/update! data [:map :lat] (js/parseFloat lat))
-                      ;;(om/update! data [:map :lng] (js/parseFloat lng))
-                      ))
+                                                             :lng (js/parseFloat lng)}))))
 
          :response-format :json})))
 
-(defn postcode-selector [data owner]
+(defn postcode-selector-component [data owner]
   (reify
     om/IInitState
     (init-state [this]
@@ -247,7 +240,8 @@
                  :onKeyPress (fn [e] (when (= (.-keyCode e) 13)
                                        (pan-to-postcode data owner)))}]
         [:button
-         {:onClick (fn [_] (pan-to-postcode data owner))}
+         {:onClick (fn [_]
+                     (pan-to-postcode data owner))}
          "Go"]]))))
 
 (defn get-maps [data]
@@ -256,8 +250,6 @@
        :handler #(om/update! data :maps %)}))
 
 (defn save-map [data owner]
-  (println "saving map, center of map is" (.getCenter (:leaflet-map @data)))
-
   (PUT (str "/maps/" (.toLowerCase (string/replace (om/get-state owner :mapname) #"[\s]+" "")))
       { ;; Even though there is no response body, we need to set the
        ;; response-format to raw otherwise the handler doesn't get
@@ -273,7 +265,7 @@
        :format :edn
        :handler (fn [_] (get-maps data))}))
 
-(defn map-saver [data owner]
+(defn map-saver-component [data owner]
   (reify
     om/IRenderState
     (render-state [this state]
@@ -287,7 +279,18 @@
         [:button {:onClick (fn [_] (save-map data owner))} "Save"]]
        ))))
 
-(defn map-loader [data owner]
+(defn load-map [data m]
+  (.panTo (:leaflet-map @data)
+          (clj->js (zipmap [:lat :lng] (:latlng m))))
+  (.setZoom (:leaflet-map @data) (:zoom m))
+  (let [val (:poi m)]
+    (om/update! data :poi-layer-value val)
+    (update-poi data val))
+  (let [val (:area m)]
+    (om/update! data :area-layer-value val)
+    (update-area data val)))
+
+(defn map-loader-component [data owner]
   (reify
     om/IDidMount
     (did-mount [this] (get-maps data))
@@ -296,14 +299,12 @@
       (html
        [:section
         [:h2 "Load maps"]
-        (for [m (:maps data)]
+        (for [m (sort-by :map (:maps data))]
           [:p [:a {:href "#"
                    :onClick (fn [e]
-                              (.panTo (:leaflet-map @data)
-                                      (clj->js (zipmap [:lat :lng] (:latlng m))))
-                              (.setZoom (:zoom m))
+                              (load-map data m)
                               (.preventDefault e))}
-               (:map m)] " - " (str m)])]))))
+               (:map m)]])]))))
 
 (defn panel-component
   [app-state owner]
@@ -313,11 +314,11 @@
     (render [this]
       (html
        [:div
-        (om/build points-of-interest app-state)
-        (om/build area app-state)
-        (om/build postcode-selector app-state)
-        (om/build map-saver app-state)
-        (om/build map-loader app-state)]))))
+        (om/build points-of-interest-component app-state)
+        (om/build area-component app-state)
+        (om/build postcode-selector-component app-state)
+        (om/build map-saver-component app-state)
+        (om/build map-loader-component app-state)]))))
 
 (defn map-component
   "put the leaflet map as state in the om component"
@@ -352,7 +353,6 @@
 
     om/IDidUpdate
     (did-update [this prev-props prev-state]
-      (println "map-component did-update")
 
       (let [node (om/get-node owner)
             {:keys [leaflet-map] :as map} (om/get-state owner :map)]

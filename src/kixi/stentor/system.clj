@@ -102,17 +102,24 @@
 (defn new-cljs-builder []
   (->ClojureScriptBuilder))
 
+(defn put-map [map & {:keys [latlng zoom poi area]}]
+  (println
+   @(http-request
+     {:method :put
+      :url (str "http://localhost:8010/maps/" map)
+      :headers {"Accept" "application/edn"}
+      :body (pr-str {:latlng latlng :zoom zoom
+                     :poi poi
+                     :area area})}
+
+     :status)))
+
 (defrecord TestData []
   component/Lifecycle
   (start [this]
     (println "Load test data")
-    (println @(http-request
-              {:method :put
-               :url "http://localhost:8010/maps/city"
-               :headers {"Accept" "application/edn"}
-               :body (pr-str {:latlng [51.505 -0.09] :zoom 13 :poi :foo :area :bar})
-               }
-              :status))
+    (put-map "city" :latlng [51.505 -0.09] :zoom 13 :poi "rent_arrears_anon" :area "hackney-employment")
+    (put-map "tenure" :latlng [51.505 -0.09] :zoom 10 :poi nil :area "tenure_oa_hackney")
     (println @(http-request
               {:method :get
                :url "http://localhost:8010/maps"
