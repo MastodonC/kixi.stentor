@@ -28,15 +28,17 @@
 
 (def app-model
   (atom
-   {:poi-layer nil
+   {:poi-layer-value nil
+    :poi-layer nil
     :poi-selector [{:label "Real Time Complaints" :value "complaints_locations_anon"}
                    {:label "Percentage Houses Overcrowded" :value "overcrowding_anon"}
                    {:label "Percentage Houses in Rent Arrears" :value "rent_arrears_anon"}
                    {:label "Median Tenure in Years" :value "tenure_anon"}
                    {:label "Percentage Houses Underoccupied" :value "underoccupancy_anon"}
                    {:label "School Pupil Numbers" :value "schools_hackney"}]
-    :area-layer nil
 
+    :area-layer-value nil
+    :area-layer nil
     :area-selector [;; Acommodation
                     {:label "Percent Unemployed" :value "hackney-employment"}
                     {:label "Percent Flats (vs Houses)" :value "accommodationtype_oa_hackney"}
@@ -117,7 +119,9 @@
       ;; to due to a bug, see discussion here:
       ;; https://github.com/yogthos/cljs-ajax/issues/38
       (if (= value "None")
-        (om/update! data :poi-layer-to-remove (:poi-layer @data))
+        (do
+          (om/update! data :poi-layer-value nil)
+          (om/update! data :poi-layer-to-remove (:poi-layer @data)))
         (GET (str  "/data/geojson-poi/" value)
             {:handler (fn [body]
                         (let [json (clj->js body)
@@ -141,6 +145,7 @@
                                                       latlng
                                                       (js-obj
                                                        "radius" 8)))))))]
+                          (om/update! data :poi-layer-value value)
                           (om/update! data :poi-layer-to-remove (:poi-layer @data))
                           (om/update! data :poi-layer-to-add layer)))
              :response-format :json})))))
@@ -155,7 +160,9 @@
       ;; to due to a bug, see discussion here:
       ;; https://github.com/yogthos/cljs-ajax/issues/38
       (if (= value "None")
-        (om/update! data :area-layer-to-remove (:area-layer @data))
+        (do
+          (om/update! data :area-layer-value nil)
+          (om/update! data :area-layer-to-remove (:area-layer @data)))
         (GET (str  "/data/geojson-area/" value)
             {:handler (fn [body]
                         (let [json (clj->js body)
@@ -169,6 +176,7 @@
                                                                 "color" "#eee"
                                                                 "fillOpacity" 0.8))
                                                       )))]
+                          (om/update! data :area-layer-value value)
                           (om/update! data :area-layer-to-remove (:area-layer @data))
                           (om/update! data :area-layer-to-add layer)))
              :response-format :json})))))
@@ -250,17 +258,20 @@
 (defn save-map [data owner]
   (println "saving map, center of map is" (.getCenter (:leaflet-map @data)))
 
-  (let [center (.getCenter (:leaflet-map @data))
-        body (pr-str {:latlng [(.-lat center) (.-lng center)] :zoom 13 :poi :foo :area :bar})]
-    (println "body is" body)
-    (PUT (str "/maps/" (.toLowerCase (string/replace (om/get-state owner :mapname) #"[\s]+" "")))
-        {;; Even though there is no response body, we need to set the
-         ;; response-format to raw otherwise the handler doesn't get
-         ;; called.
-         :response-format :raw
-         :params {:latlng [(.-lat center) (.-lng center)] :zoom 13 :poi :foo :area :bar}
-         :format :edn
-         :handler (fn [_] (get-maps data))})))
+  (PUT (str "/maps/" (.toLowerCase (string/replace (om/get-state owner :mapname) #"[\s]+" "")))
+      { ;; Even though there is no response body, we need to set the
+       ;; response-format to raw otherwise the handler doesn't get
+       ;; called.
+       :response-format :raw
+       :params (let [lmap (:leaflet-map @data)
+                     center (.getCenter lmap)
+                     zoom (.getZoom lmap)]
+                 {:latlng [(.-lat center) (.-lng center)]
+                  :zoom zoom
+                  :poi (:poi-layer-value @data)
+                  :area (:area-layer-value @data)})
+       :format :edn
+       :handler (fn [_] (get-maps data))}))
 
 (defn map-saver [data owner]
   (reify
@@ -270,12 +281,9 @@
        [:section
         [:h2 "Save current map"]
         [:label {:for "maplabel-input"} "Save As"]
-        [:input {:id "maplabel-input"
-                 :type "text"
-                 :onChange (fn [e]
-                             (om/set-state! owner :mapname (.-value (.-target e))))
-                 :onKeyPress (fn [e] (when (= (.-keyCode e) 13)
-                                       (save-map data owner)))}]
+        [:input {:id "maplabel-input" :type "text"
+                 :onChange (fn [e] (om/set-state! owner :mapname (.-value (.-target e))))
+                 :onKeyPress (fn [e] (when (= (.-keyCode e) 13) (save-map data owner)))}]
         [:button {:onClick (fn [_] (save-map data owner))} "Save"]]
        ))))
 
@@ -293,8 +301,9 @@
                    :onClick (fn [e]
                               (.panTo (:leaflet-map @data)
                                       (clj->js (zipmap [:lat :lng] (:latlng m))))
+                              (.setZoom (:zoom m))
                               (.preventDefault e))}
-               (:map m)]])]))))
+               (:map m)] " - " (str m)])]))))
 
 (defn panel-component
   [app-state owner]
