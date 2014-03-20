@@ -10,8 +10,9 @@
         (= location-cd "MSOA") :MSOA11CD))
 
 (def geo-json-files
-  {:OA11CD "/home/bld/data/geojson/output-area-generalised.geojson"
-   :LSOA11CD "/home/bld/data/geojson/lower-super-output-area-generalised.geojson"})
+  {:OA11CD "/home/bld/wip/stentor/data/geojson/output-area-generalised.geojson"
+   :LSOA11CD "/home/bld/wip/stentor/data/geojson/lower-super-output-area-generalised.geojson"
+   :MSOA11CD "/home/bld/wip/stentor/data/geojson/medium-super-output-area.geojson"})
 
 ;; This will eventually hit Cassandra or similar
 (defn get-features [location-code-key feature-codes]
