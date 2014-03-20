@@ -278,10 +278,10 @@
       (html
        [:section
         [:h2 "Save current map"]
-        [:label {:for "maplabel-input"} "Save As"]
         [:input {:id "maplabel-input" :type "text"
                  :onChange (fn [e] (om/set-state! owner :mapname (.-value (.-target e))))
-                 :onKeyPress (fn [e] (when (= (.-keyCode e) 13) (save-map data owner)))}]
+                 :onKeyPress (fn [e] (when (= (.-keyCode e) 13) (save-map data owner)))
+                 :placeholder "Save as..."}]
         [:button {:onClick (fn [_] (save-map data owner))} "Save"]]
        ))))
 
