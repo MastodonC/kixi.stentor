@@ -96,7 +96,7 @@
 
     :leaflet-map nil ; authoritative
     :map {:lat 51.5478 :lng -0.0547} ; not authoritative
-}))
+    }))
 
 (def tile-url "http://{s}.tile.cloudmade.com/84b48bab1db44fb0a70c83bfc087b616/997/256/{z}/{x}/{y}.png")
 
