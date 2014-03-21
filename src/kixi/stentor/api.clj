@@ -61,8 +61,6 @@
   :authorized? (fn [{request :request}] (authorized-request? authorizer request))
   :available-media-types ["application/json"]
   :exists? (fn [{{{:keys [path]} :route-params} :request}]
-             (println "dir is" dir)
-             (println "path is" path)
              (when-let [res (io/file dir (str path ".js"))]
                {::resource res}))
   :handle-ok (fn [{{{:keys [path]} :route-params} :request res ::resource}]
@@ -103,16 +101,9 @@
 
 (defresource area-data [dir authorizer handlers]
   :authorized? (fn [{request :request}]
-                 (println "authorizing")
-                 (println "authorizer is " authorizer)
-                 (println "request is " request)
-                 (println "R1 is" (authorized-request? (first (:delegates authorizer)) request))
-                 (println "R2 is" (authorized-request? (second (:delegates authorizer)) request))
                  (authorized-request? authorizer request))
   :available-media-types ["application/json"]
   :exists? (fn [{{{:keys [path]} :route-params} :request}]
-             (println "dir is" dir)
-             (println "path is" path)
              (when-let [res (io/file dir (str path ".js"))]
                {::resource res}))
   :handle-ok (fn [{{{:keys [path]} :route-params} :request res ::resource}]
