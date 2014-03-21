@@ -24,12 +24,13 @@
   :plugins [[lein-cljsbuild "1.0.2"]]
 
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [juxt/modular "0.2.0-SNAPSHOT"]
+                 [juxt/modular "0.2.0"]
                  ;; EDN reader with location metadata
                  [org.clojure/tools.reader "0.8.3"]
-                 [juxt.modular/http-kit "0.1.0-SNAPSHOT"]
-                 [juxt.modular/bidi "0.1.0-SNAPSHOT"]
+                 [juxt.modular/http-kit "0.2.0"]
+                 [juxt.modular/bidi "0.2.0"]
                  ;; [juxt/modular.cljs-builder "0.1.0-SNAPSHOT"]
+                 [juxt.modular/entrance "0.2.2"]
 
                  ;; AJAX
                  [cljs-ajax "0.2.3"]
@@ -39,6 +40,9 @@
 
                  ;; Om Debugging
                  [ankha "0.1.1"]
+
+                 ;; Hiccup for templating
+                 [hiccup "1.0.5"]
 
                  ;; temp
                  ;; anything dependency below this line should be removed

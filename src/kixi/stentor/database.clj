@@ -15,7 +15,6 @@
 (ns kixi.stentor.database)
 
 (defprotocol Database
-  (store-map! [this name data])
-  (get-map [this name])
-  (index [this])
-)
+  (store-map! [this username mapname data])
+  (get-map [this username mapname])
+  (index [this username]))

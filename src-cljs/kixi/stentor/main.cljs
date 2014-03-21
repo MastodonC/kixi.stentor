@@ -48,7 +48,7 @@
     :area-selector [;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                     ;; Hackney
                     {:label "Hackney Percent Unemployed" :value "hackney_employment"}
-                    
+
                     ;; Acommodation
                     {:label "Hackney Percent Flats (vs Houses)" :value "hackney_accommodationtype_oa_hackney"}
                     {:label "Hackney Percent Overoccupied" :value "hackney_occupancy_oa_hackney"}
@@ -70,13 +70,13 @@
                     {:label "Hackney Robberies Last Year" :value "hackney_robbery_lsoa_hackney_narrow"}
                     {:label "Hackney Theft & Handling Offences Last Year" :value "hackney_theft_and_handling_lsoa_hackney_narrow"}
                     {:label "Hackney Violence Against the Person Offences Last Year" :value "hackney_violence_lsoa_hackney_narrow"}
-                    
+
                     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                     ;; Cambridgeshire
                     {:label "Cambridgeshire Broadband Speed" :value "cambs_broadband_speed"}
                     {:label "Cambridgeshire Percent Unemployment" :value "cambs_employment_cambridge"}
                     {:label "Cambridgeshire National Insurance Registrations" :value "cambs_nino_cambridge"}
-                    
+
                     ;; Accommodation
                     {:label "Cambridgeshire Percent Flats (vs Houses)" :value "cambs_accommodation_type_cambridge"}
                     {:label "Cambridgeshire Percent Overoccupied" :value "cambs_occupancy_cambridge"}
@@ -88,9 +88,9 @@
                     {:label "Cambridgeshire Community Safety (WARM)" :value "cambs_communitysafety_cambridge"}
                     {:label "Cambridgeshire Resilience (WARM)" :value "cambs_resilience_cambridge"}
                     {:label "Cambridgeshire Taking Part" :value "cambs_takingpart_cambridge"}
-                    
+
                     ;; Crime
-                    
+
                     ]
     :maps []
 
@@ -373,7 +373,6 @@
         ;;(.on leaflet-map "click" (fn [ev] (.dir js/console ev)))
         (.on leaflet-map "moveend" (fn [ev]
                                      (let [center (.getCenter leaflet-map)]
-                                       (.dir js/console center)
                                        (om/update! app-state [:map :lng] (.-lng center))
                                        (om/update! app-state [:map :lat] (.-lat center)))
                                      ))
