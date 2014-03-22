@@ -407,6 +407,9 @@
 
         (when-let [layer (:area-layer-to-add app-state)]
           (.addLayer leaflet-map layer)
+          ;; snap to the layer bounds when layer is not in viewport
+          (when-not (.intersects (.getBounds leaflet-map) (.getBounds layer))
+            (.fitBounds leaflet-map (.getBounds layer))) 
           (om/update! app-state :area-layer-to-add nil)
           (om/update! app-state :area-layer layer))
 
