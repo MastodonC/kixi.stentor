@@ -30,72 +30,147 @@
   (atom
    {:poi-layer-value nil
     :poi-layer nil
-    :poi-selector [;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                   ;; Hackney
-                   {:label "Hackney Real Time Complaints" :value "hackney_complaints_locations_anon"}
-                   {:label "Hackney Percentage Houses Overcrowded" :value "hackney_overcrowding_anon"}
-                   {:label "Hackney Percentage Houses in Rent Arrears" :value "hackney_rent_arrears_anon"}
-                   {:label "Hackney Median Tenure in Years" :value "hackney_tenure_anon"}
-                   {:label "Hackney Percentage Houses Underoccupied" :value "hackney_underoccupancy_anon"}
-                   {:label "Hackney School Pupil Numbers" :value "hackney_schools_hackney"}
+    :poi-selector []
+    ;; [ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;  ;; Hackney
+    ;;  {:label "Hackney Real Time Complaints" :value "hackney_complaints_locations_anon"}
+    ;;  {:label "Hackney Percentage Houses Overcrowded" :value "hackney_overcrowding_anon"}
+    ;;  {:label "Hackney Percentage Houses in Rent Arrears" :value "hackney_rent_arrears_anon"}
+    ;;  {:label "Hackney Median Tenure in Years" :value "hackney_tenure_anon"}
+    ;;  {:label "Hackney Percentage Houses Underoccupied" :value "hackney_underoccupancy_anon"}
+    ;;  {:label "Hackney School Pupil Numbers" :value "hackney_schools_hackney"}
 
-                   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                   ;; Cambs
-                   {:label "Cambridgeshire Library Computer Use Last Year" :value "cambs_library_computeruse_lastyear"}]
+    ;;  ;;
+    ;;  ;; Cambs
+    ;;  {:label "Cambridgeshire Library Computer Use Last Year" :value "cambs_library_computeruse_lastyear"}]
 
     :area-layer-value nil
     :area-layer nil
-    :area-selector [;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                    ;; Hackney
-                    {:label "Hackney Percent Unemployed" :value "hackney_employment"}
+    :area-selector [
+                    {:label "bexley_belonging" :value "bexley_belonging"}
+                    {:label "bexley_broadband_speed" :value "bexley_broadband_speed"}
+                    {:label "bexley_communitycohesion" :value "bexley_communitycohesion"}
+                    {:label "bexley_communitysafety" :value "bexley_communitysafety"}
 
-                    ;; Acommodation
-                    {:label "Hackney Percent Flats (vs Houses)" :value "hackney_accommodationtype_oa_hackney"}
-                    {:label "Hackney Percent Overoccupied" :value "hackney_occupancy_oa_hackney"}
-                    {:label "Hackney Percent Social Rented" :value "hackney_tenure_oa_hackney"}
+                    {:label "bexley_crime_scrub_Anti-social_behaviour" :value "bexley_crime_scrub_Anti-social_behaviour"}
+                    {:label "bexley_crime_scrub_Burglary" :value "bexley_crime_scrub_Burglary"}
+                    {:label "bexley_crime_scrub_Criminal_damage_and_arson" :value "bexley_crime_scrub_Criminal_damage_and_arson"}
 
-                    ;; WARM
-                    {:label "Hackney Belonging (WARM)" :value "hackney_belonging_oa_hackney"}
-                    {:label "Hackney Community Cohesion (WARM)" :value "hackney_communitycohesion_lsoa_hackney"}
-                    {:label "Hackney Community Safety (WARM)" :value "hackney_communitysafety_lsoa_hackney"}
-                    {:label "Hackney Resilience (WARM)" :value "hackney_resilience_oa_hackney"}
-                    {:label "Hackney Taking Part (WARM)" :value "hackney_takingpart_lsoa_hackney"}
+                    {:label "bexley_crime_scrub_Drugs" :value "bexley_crime_scrub_Drugs"}
+                    {:label "bexley_crime_scrub_Other_crime" :value "bexley_crime_scrub_Other_crime"}
+                    {:label "bexley_crime_scrub_Other_theft" :value "bexley_crime_scrub_Other_theft"}
+                    {:label "bexley_crime_scrub_Robbery" :value "bexley_crime_scrub_Robbery"}
+                    {:label "bexley_crime_scrub_Shoplifting" :value "bexley_crime_scrub_Shoplifting"}
+                    {:label "bexley_crime_scrub_Total_crime" :value "bexley_crime_scrub_Total_crime"}
+                    {:label "bexley_crime_scrub_Vehicle_crime" :value "bexley_crime_scrub_Vehicle_crime"}
+                    {:label "bexley_employment" :value "bexley_employment"}
+                    {:label "bexley_nino" :value "bexley_nino"}
+                    {:label "bexley_occupancy" :value "bexley_occupancy"}
+                    {:label "bexley_resilience" :value "bexley_resilience"}
+                    {:label "bexley_takingpart" :value "bexley_takingpart"}
+                    {:label "bexley_tenure" :value "bexley_tenure"}
+                    {:label "cambridge_accommodation_type" :value "cambridge_accommodation_type"}
+                    {:label "cambridge_belonging" :value "cambridge_belonging"}
+                    {:label "cambridge_broadband_speed" :value "cambridge_broadband_speed"}
+                    {:label "cambridge_communitycohesion" :value "cambridge_communitycohesion"}
+                    {:label "cambridge_communitysafety" :value "cambridge_communitysafety"}
 
-                    ;; Crime
-                    {:label "Hackney Total Crimes Last Year" :value "hackney_crime_summary_lsoa_hackney_narrow"}
-                    {:label "Hackney Burglaries Last Year" :value "hackney_burglary_lsoa_hackney_narrow"}
-                    {:label "Hackney Criminal Damage Incidents Last Year" :value "hackney_criminal_damage_lsoa_hackney_narrow"}
-                    {:label "Hackney Drugs Crimes Last Year" :value "hackney_drugs_lsoa_hackney_narrow"}
-                    {:label "Hackney Other Crimes Last Year" :value "hackney_other_crime_lsoa_hackney_narrow"}
-                    {:label "Hackney Robberies Last Year" :value "hackney_robbery_lsoa_hackney_narrow"}
-                    {:label "Hackney Theft & Handling Offences Last Year" :value "hackney_theft_and_handling_lsoa_hackney_narrow"}
-                    {:label "Hackney Violence Against the Person Offences Last Year" :value "hackney_violence_lsoa_hackney_narrow"}
+                    {:label "cambridge_crime_scrub_Anti-social_behaviour" :value "cambridge_crime_scrub_Anti-social_behaviour"}
+                    {:label "cambridge_crime_scrub_Burglary" :value "cambridge_crime_scrub_Burglary"}
+                    {:label "cambridge_crime_scrub_Criminal_damage_and_arson" :value "cambridge_crime_scrub_Criminal_damage_and_arson"}
 
-                    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                    ;; Cambridgeshire
-                    {:label "Cambridgeshire Broadband Speed" :value "cambs_broadband_speed"}
-                    {:label "Cambridgeshire Percent Unemployment" :value "cambs_employment_cambridge"}
-                    {:label "Cambridgeshire National Insurance Registrations" :value "cambs_nino_cambridge"}
+                    {:label "cambridge_crime_scrub_Drugs" :value "cambridge_crime_scrub_Drugs"}
+                    {:label "cambridge_crime_scrub_Other_crime" :value "cambridge_crime_scrub_Other_crime"}
+                    {:label "cambridge_crime_scrub_Other_theft" :value "cambridge_crime_scrub_Other_theft"}
+                    {:label "cambridge_crime_scrub_Robbery" :value "cambridge_crime_scrub_Robbery"}
+                    {:label "cambridge_crime_scrub_Shoplifting" :value "cambridge_crime_scrub_Shoplifting"}
+                    {:label "cambridge_crime_scrub_Total_crime" :value "cambridge_crime_scrub_Total_crime"}
+                    {:label "cambridge_crime_scrub_Vehicle_crime" :value "cambridge_crime_scrub_Vehicle_crime"}
+                    {:label "cambridge_demographicslibraryusers" :value "cambridge_demographicslibraryusers"}
+                    {:label "cambridge_demographicslibraryvisits" :value "cambridge_demographicslibraryvisits"}
+                    {:label "cambridge_employment" :value "cambridge_employment"}
+                    {:label "cambridge_nino" :value "cambridge_nino"}
+                    {:label "cambridge_occupancy" :value "cambridge_occupancy"}
+                    {:label "cambridge_resilience" :value "cambridge_resilience"}
+                    {:label "cambridge_takingpart" :value "cambridge_takingpart"}
+                    {:label "cambridge_tenure" :value "cambridge_tenure"}
+                    {:label "hackney_accommodation_type" :value "hackney_accommodation_type"}
+                    {:label "hackney_belonging" :value "hackney_belonging"}
+                    {:label "hackney_broadband_speed" :value "hackney_broadband_speed"}
+                    {:label "hackney_communitycohesion" :value "hackney_communitycohesion"}
+                    {:label "hackney_communitysafety" :value "hackney_communitysafety"}
+      
+                    {:label "hackney_crime_scrub_Anti-social_behaviour" :value "hackney_crime_scrub_Anti-social_behaviour"}
+                    {:label "hackney_crime_scrub_Burglary" :value "hackney_crime_scrub_Burglary"}
+                    {:label "hackney_crime_scrub_Criminal_damage_and_arson" :value "hackney_crime_scrub_Criminal_damage_and_arson"}
+                    {:label "hackney_crime_scrub_Drugs" :value "hackney_crime_scrub_Drugs"}
+                    {:label "hackney_crime_scrub_Other_crime" :value "hackney_crime_scrub_Other_crime"}
+                    {:label "hackney_crime_scrub_Other_theft" :value "hackney_crime_scrub_Other_theft"}
+                    {:label "hackney_crime_scrub_Robbery" :value "hackney_crime_scrub_Robbery"}
+                    {:label "hackney_crime_scrub_Shoplifting" :value "hackney_crime_scrub_Shoplifting"}
+                    {:label "hackney_crime_scrub_Total_crime" :value "hackney_crime_scrub_Total_crime"}
+                    {:label "hackney_crime_scrub_Vehicle_crime" :value "hackney_crime_scrub_Vehicle_crime"}
 
-                    ;; Accommodation
-                    {:label "Cambridgeshire Percent Flats (vs Houses)" :value "cambs_accommodation_type_cambridge"}
-                    {:label "Cambridgeshire Percent Overoccupied" :value "cambs_occupancy_cambridge"}
-                    {:label "Cambridgeshire Percent Social Rented" :value "cambs_tenure_cambridge"}
-
-                    ;; WARM
-                    {:label "Cambridgeshire Belonging (WARM)" :value "cambs_belonging_cambridge"}
-                    {:label "Cambridgeshire Community Cohesion (WARM)" :value "cambs_communitycohesion_cambridge"}
-                    {:label "Cambridgeshire Community Safety (WARM)" :value "cambs_communitysafety_cambridge"}
-                    {:label "Cambridgeshire Resilience (WARM)" :value "cambs_resilience_cambridge"}
-                    {:label "Cambridgeshire Taking Part" :value "cambs_takingpart_cambridge"}
-
-                    ;; Crime
-
+                    {:label "hackney_employment" :value "hackney_employment"}
+                    {:label "hackney_nino" :value "hackney_nino"}
+                    {:label "hackney_occupancy" :value "hackney_occupancy"}
+                    {:label "hackney_resilience" :value "hackney_resilience"}
+                    {:label "hackney_takingpart" :value "hackney_takingpart"}
+                    {:label "hackney_tenure" :value "hackney_tenure"}
                     ]
+
+;;     [ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;      ;; Hackney
+;;      {:label "Hackney Percent Unemployed" :value "hackney_employment"}
+
+;;      ;; Acommodation
+;;      {:label "Hackney Percent Flats (vs Houses)" :value "hackney_accommodationtype_oa_hackney"}
+;;      {:label "Hackney Percent Overoccupied" :value "hackney_occupancy_oa_hackney"}
+;;      {:label "Hackney Percent Social Rented" :value "hackney_tenure_oa_hackney"}
+
+;;      ;; WARM
+;;      {:label "Hackney Belonging (WARM)" :value "hackney_belonging_oa_hackney"}
+;;      {:label "Hackney Community Cohesion (WARM)" :value "hackney_communitycohesion_lsoa_hackney"}
+;;      {:label "Hackney Community Safety (WARM)" :value "hackney_communitysafety_lsoa_hackney"}
+;;      {:label "Hackney Resilience (WARM)" :value "hackney_resilience_oa_hackney"}
+;;      {:label "Hackney Taking Part (WARM)" :value "hackney_takingpart_lsoa_hackney"}
+
+;;      ;; Crime
+;;      {:label "Hackney Total Crimes Last Year" :value "hackney_crime_summary_lsoa_hackney_narrow"}
+;;      {:label "Hackney Burglaries Last Year" :value "hackney_burglary_lsoa_hackney_narrow"}
+;;      {:label "Hackney Criminal Damage Incidents Last Year" :value "hackney_criminal_damage_lsoa_hackney_narrow"}
+;;      {:label "Hackney Drugs Crimes Last Year" :value "hackney_drugs_lsoa_hackney_narrow"}
+;;      {:label "Hackney Other Crimes Last Year" :value "hackney_other_crime_lsoa_hackney_narrow"}
+;;      {:label "Hackney Robberies Last Year" :value "hackney_robbery_lsoa_hackney_narrow"}
+;;      {:label "Hackney Theft & Handling Offences Last Year" :value "hackney_theft_and_handling_lsoa_hackney_narrow"}
+;;      {:label "Hackney Violence Against the Person Offences Last Year" :value "hackney_violence_lsoa_hackney_narrow"}
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;      ;; Cambridgeshire
+;;      {:label "Cambridgeshire Broadband Speed" :value "cambs_broadband_speed"}
+;;      {:label "Cambridgeshire Percent Unemployment" :value "cambs_employment_cambridge"}
+;;      {:label "Cambridgeshire National Insurance Registrations" :value "cambs_nino_cambridge"}
+
+;;      ;; Accommodation
+;;      {:label "Cambridgeshire Percent Flats (vs Houses)" :value "cambs_accommodation_type_cambridge"}
+;;      {:label "Cambridgeshire Percent Overoccupied" :value "cambs_occupancy_cambridge"}
+;;      {:label "Cambridgeshire Percent Social Rented" :value "cambs_tenure_cambridge"}
+
+;;      ;; WARM
+;;      {:label "Cambridgeshire Belonging (WARM)" :value "cambs_belonging_cambridge"}
+;;      {:label "Cambridgeshire Community Cohesion (WARM)" :value "cambs_communitycohesion_cambridge"}
+;;      {:label "Cambridgeshire Community Safety (WARM)" :value "cambs_communitysafety_cambridge"}
+;;      {:label "Cambridgeshire Resilience (WARM)" :value "cambs_resilience_cambridge"}
+;;      {:label "Cambridgeshire Taking Part" :value "cambs_takingpart_cambridge"}
+
+;;      ;; Crime
+
+;;      ]
     :maps []
 
-    :leaflet-map nil ; authoritative
-    :map {:lat 51.5478 :lng -0.0547} ; not authoritative
+    :leaflet-map nil                    ; authoritative
+    :map {:lat 51.5478 :lng -0.0547}    ; not authoritative
+
     }))
 
 (def tile-url "http://{s}.tile.cloudmade.com/84b48bab1db44fb0a70c83bfc087b616/997/256/{z}/{x}/{y}.png")

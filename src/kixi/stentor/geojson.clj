@@ -41,6 +41,7 @@
                                  (Double/parseDouble (second (get data-lookup (get-in % [:properties location-code-key])))))
                                features)]
     (with-open [out (io/writer out-name)]
+      (println (format "IN: %s OUT: %s" csv-file-name out-name))
       (json/generate-stream
        {:type "FeatureCollection"
         :features enriched-features
@@ -56,7 +57,144 @@
                             :properties {:v (Double/parseDouble v)}}))
                        (drop 1 data))]
     (with-open [out (io/writer out-name)]
-        (json/generate-stream 
-         {:type "FeatureCollection"
-          :features features}
-         out))))
+      (println (format "IN: %s OUT: %s" csv-file-name out-name))
+      (json/generate-stream 
+       {:type "FeatureCollection"
+        :features features}
+       out))))
+
+(comment
+
+  ;; public choropleth
+  (let [data-dir "/home/bld/data/data_stentor/public/choropleth/"]
+    (map
+     #(let [f %]
+        (kixi.stentor.geojson/csv->geojson (str data-dir f ".csv")
+                                           (str data-dir f ".js")))
+     ["bexley_accommodation_type"
+      "bexley_belonging"
+      "bexley_broadband_speed"
+      "bexley_communitycohesion"
+      "bexley_communitysafety"
+      ;; "bexley_crime"
+      "bexley_crime_scrub_Anti-social_behaviour"
+      "bexley_crime_scrub_Burglary"
+      "bexley_crime_scrub_Criminal_damage_and_arson"
+      ;; "bexley_crime_scrub"
+      "bexley_crime_scrub_Drugs"
+      "bexley_crime_scrub_Other_crime"
+      "bexley_crime_scrub_Other_theft"
+      "bexley_crime_scrub_Robbery"
+      "bexley_crime_scrub_Shoplifting"
+      "bexley_crime_scrub_Total_crime"
+      "bexley_crime_scrub_Vehicle_crime"
+      "bexley_employment"
+      "bexley_nino"
+      "bexley_occupancy"
+      "bexley_resilience"
+      "bexley_takingpart"
+      "bexley_tenure"
+      "cambridge_accommodation_type"
+      "cambridge_belonging"
+      "cambridge_broadband_speed"
+      "cambridge_communitycohesion"
+      "cambridge_communitysafety"
+      ;; "cambridge_crime"
+      "cambridge_crime_scrub_Anti-social_behaviour"
+      "cambridge_crime_scrub_Burglary"
+      "cambridge_crime_scrub_Criminal_damage_and_arson"
+      ;;"cambridge_crime_scrub"
+      "cambridge_crime_scrub_Drugs"
+      "cambridge_crime_scrub_Other_crime"
+      "cambridge_crime_scrub_Other_theft"
+      "cambridge_crime_scrub_Robbery"
+      "cambridge_crime_scrub_Shoplifting"
+      "cambridge_crime_scrub_Total_crime"
+      "cambridge_crime_scrub_Vehicle_crime"
+      "cambridge_demographicslibraryusers"
+      "cambridge_demographicslibraryvisits"
+      "cambridge_employment"
+      "cambridge_nino"
+      "cambridge_occupancy"
+      "cambridge_resilience"
+      "cambridge_takingpart"
+      "cambridge_tenure"
+      "hackney_accommodation_type"
+      "hackney_belonging"
+      "hackney_broadband_speed"
+      "hackney_communitycohesion"
+      "hackney_communitysafety"
+      ; "hackney_crime"
+      "hackney_crime_scrub_Anti-social_behaviour"
+      "hackney_crime_scrub_Burglary"
+      "hackney_crime_scrub_Criminal_damage_and_arson"
+      ;; "hackney_crime_scrub"
+      "hackney_crime_scrub_Drugs"
+      "hackney_crime_scrub_Other_crime"
+      "hackney_crime_scrub_Other_theft"
+      "hackney_crime_scrub_Robbery"
+      "hackney_crime_scrub_Shoplifting"
+      "hackney_crime_scrub_Total_crime"
+      "hackney_crime_scrub_Vehicle_crime"
+      "hackney_employment"
+      "hackney_nino"
+      "hackney_occupancy"
+      "hackney_resilience"
+      "hackney_takingpart"
+      "hackney_tenure"
+      ;; "national_accommodationtype"
+      ;; "national_broadbandspeed"
+      ;; "national_crime"
+      ;; "national_crime_scrub_Anti-social_behaviour"
+      ;; "national_crime_scrub_Burglary"
+      ;; "national_crime_scrub_Criminal_damage_and_arson"
+      ;; "national_crime_scrub"
+      ;; "national_crime_scrub_Drugs"
+      ;; "national_crime_scrub_Other_crime"
+      ;; "national_crime_scrub_Other_theft"
+      ;; "national_crime_scrub_Robbery"
+      ;; "national_crime_scrub_Shoplifting"
+      ;; "national_crime_scrub_Total_crime"
+      ;; "national_crime_scrub_Vehicle_crime"
+      ;; "national_employment"
+      ;; "national_nino"
+      ;; "national_occupancy"
+      ;; "national_tenure"
+      ]))
+
+  ;; private choropleth
+  (let [data-dir "/home/bld/data/data_stentor/private/choropleth/"]
+    (map
+     #(let [f %]
+        (kixi.stentor.geojson/csv->geojson (str data-dir f ".csv")
+                                           (str data-dir f ".js")))
+     ["bexley_adultcare"
+      "bexley_oxleasclients"
+      "bexley_recycledwastenonpaper"
+      "bexley_recycledwastepaper"
+      "bexley_residualwaste"
+      "cambridge_futurebroadband"]))
+  
+  ;; public poi
+  (let [data-dir "/home/bld/data/data_stentor/public/poi/"]
+    (map
+     #(let [f %]
+        (kixi.stentor.geojson/poi-csv->geojson (str data-dir f ".csv")
+                                               (str data-dir f ".js")))
+     []))
+  
+  ;; private poi
+  (let [data-dir "/home/bld/data/data_stentor/private/poi/"]
+    (map
+     #(let [f %]
+        (kixi.stentor.geojson/poi-csv->geojson (str data-dir f ".csv")
+                                               (str data-dir f ".js")))
+     ["cambridge_librarycomputeruselastyear"
+      "hackney_complaintslocations"
+      "hackney_overcrowding"
+      "hackney_rentarrears"
+      "hackney_tenure"
+      "hackney_underoccupancy"]))
+  
+  )
+
