@@ -220,7 +220,11 @@
                                               "opacity" 0.8
                                               "color" "#08306b"
                                               "fillOpacity" 0.6))
-
+                                           
+                                           "onEachFeature"
+                                           (fn [feature layer]
+                                             (.on layer js# {:click (fn [e] (println "Event: " e))}))
+                                           
                                            "pointToLayer"
                                            (fn [feature latlng]
                                              (-> js/L
@@ -244,22 +248,30 @@
     ;; to due to a bug, see discussion here:
     ;; https://github.com/yogthos/cljs-ajax/issues/38
     (GET (str  "/data/geojson-area/" value)
-        {:handler (fn [body]
-                    (let [json (clj->js body)
-                          layer (-> js/L (.geoJson
-                                          json
-                                          (js-obj "style"
-                                                  (fn [feature]
-                                                    (js-obj "fillColor"
-                                                            (color/brewer :PuR 7 (aget feature "properties" "bucket"))
-                                                            "weight" 1
-                                                            "color" "#eee"
-                                                            "fillOpacity" 0.8))
-                                                  )))]
-                      (om/update! data :area-layer-value value)
-                      (om/update! data :area-layer-to-remove (:area-layer @data))
-                      (om/update! data :area-layer-to-add layer)))
-         :response-format :json})))
+         {:handler (fn [body]
+                     (let [json (clj->js body)
+                           layer (-> js/L (.geoJson
+                                           json
+                                           #js {:style
+                                                (fn [feature]
+                                                  #js {:fillColor
+                                                       (color/brewer :PuR 7 (aget feature "properties" "bucket"))
+                                                       :weight 1
+                                                       :color "#eee"
+                                                       :fillOpacity 0.8}
+                                                  )
+                                                    
+                                                :onEachFeature
+                                                (fn [feature layer]
+                                                  (.on layer
+                                                       #js {:click
+                                                            (fn [e]
+                                                              (let [props (aget e "target" "feature" "properties")]
+                                                                (om/update! data :area-feature-data props)))}))}))]
+                       (om/update! data :area-layer-value value)
+                       (om/update! data :area-layer-to-remove (:area-layer @data))
+                       (om/update! data :area-layer-to-add layer)))
+          :response-format :json})))
 
 (defn points-of-interest-component [data owner]
   (reify
@@ -288,6 +300,23 @@
          [:option "None"]
          (for [{:keys [label value]} (:area-selector data)]
            [:option {:value value} label])]]))))
+
+(defn area-info-component [data owner]
+  (reify
+    om/IRenderState
+    (render-state [this state]
+      (let [props (js->clj (:area-feature-data data) :keywordize-keys true)]
+        (println "Area Layer: " (js->clj (:area-layer data)))
+        (html
+         [:section
+          [:h2 "Info"]
+          ;; [:p "Descriptive text about " (:label (:area-selector data))]         
+          [:p [:strong "Area: "]
+           (get props :LSOA11CD (get props :OA11CD (get props :MSOA11CD "None Selected")))
+           " "
+           (when-let [area-name (get props :LSOA11NM (get props :MSOA11NM))]
+             area-name)]
+          [:p [:strong "Value: "] (get props :v "None Selected")]])))))
 
 (defn pan-to-postcode [data owner]
   (let [postcode (.toUpperCase (string/replace (om/get-state owner :postcode) #"[\s]+" ""))]
@@ -410,6 +439,7 @@
        [:div
         (om/build points-of-interest-component app-state)
         (om/build area-component app-state)
+        (om/build area-info-component app-state)
         (om/build postcode-selector-component app-state)
         (om/build map-saver-component app-state)
         (om/build map-loader-component app-state)]))))
@@ -457,6 +487,11 @@
 
         (when-let [layer (:area-layer-to-remove app-state)]
           (.removeLayer leaflet-map layer)
+
+          ;; FIXME: Is this the right place to do this?
+          ;; blat the area-feature-data when the layer changes
+          (om/update! app-state :area-feature-data nil)
+          
           (om/update! app-state :area-layer-to-remove nil)
           (om/update! app-state :area-layer nil))
 
