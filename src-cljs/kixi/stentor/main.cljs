@@ -85,6 +85,8 @@
                     ;;
                     ;; Cambridge
                     {:label "Cambridge Broadband Speed" :value "cambridge_broadband_speed"}
+                    {:label "Cambridge Future Broadband" :value "cambridge_futurebroadband"}
+                    
                     {:label "Cambridge Employment" :value "cambridge_employment"}
                     {:label "Cambridge National Insurance Registrations" :value "cambridge_nino"}
                     {:label "Cambridge Demographics Library Users" :value "cambridge_demographicslibraryusers"}
