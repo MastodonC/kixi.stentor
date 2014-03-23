@@ -68,7 +68,7 @@
                     {:label "Bexley Taking Part" :value "bexley_takingpart"}
 
                     ;; WARM
-                    {:label "Bexley Resilienc (WARM)" :value "bexley_resilience"}
+                    {:label "Bexley Resilience (WARM)" :value "bexley_resilience"}
                     
                     ;; Crime
                     {:label "Bexley Anti-social Behaviour" :value "bexley_crime_scrub_Anti-social_behaviour"}
