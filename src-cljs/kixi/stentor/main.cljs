@@ -51,6 +51,11 @@
                     {:label "Bexley Percent Unemployed" :value "bexley_employment"}
                     {:label "Bexley National Insurance Registrations" :value "bexley_nino"}
                     {:label "Bexley Broadband Speed" :value "bexley_broadband_speed"}
+
+                    ;; Waste
+                    {:label "Bexley Recycled Waste Non-paper" :value "bexley_recycledwastenonpaper"}
+                    {:label "Bexley Recycled Waste Paper" :value "bexley_recycledwastepaper"}
+                    {:label "Bexley Residual Waste" :value "bexley_residualwaste"}
                     
                     ;; Accommodation
                     {:label "Bexley Percent Over Occupied" :value "bexley_occupancy"}
