@@ -223,7 +223,7 @@
                                            
                                            "onEachFeature"
                                            (fn [feature layer]
-                                             (.on layer js# {:click (fn [e] (println "Event: " e))}))
+                                             (.on layer #js {:click (fn [e] (println "Event: " e))}))
                                            
                                            "pointToLayer"
                                            (fn [feature latlng]
