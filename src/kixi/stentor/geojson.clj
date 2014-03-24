@@ -204,6 +204,13 @@
       "hackney_rentarrears"
       "hackney_tenure"
       "hackney_underoccupancy"]))
+
+  (let [data-dir "/home/bld/data/data_stentor/private/poi/"]
+    (map
+     #(let [f %]
+        (kixi.stentor.geojson/poi-csv->geojson (str data-dir f ".csv")
+                                               (str data-dir f ".js")))
+     ["cambridge_digitallyexcluded"]))
   
   )
 

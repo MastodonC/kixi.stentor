@@ -30,7 +30,8 @@
   (atom
    {:poi-layer-value nil
     :poi-layer nil
-    :poi-selector [{:label "Cambridge Library Computer Use Last Year" :value "cambridge_librarycomputeruselastyear"}]
+    :poi-selector [{:label "Cambridge Library Computer Use Last Year" :value "cambridge_librarycomputeruselastyear"}
+                   {:label "Cambridge Digitally Excluded" :value "cambridge_digitallyexcluded"}]
     ;; [ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;  ;; Hackney
     ;;  {:label "Hackney Real Time Complaints" :value "hackney_complaints_locations_anon"}
