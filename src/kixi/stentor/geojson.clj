@@ -162,6 +162,15 @@
       ;; "national_tenure"
       ]))
 
+  (let [data-dir "/home/bld/data/data_stentor/public/choropleth/"]
+    (map
+     #(let [f %]
+        (kixi.stentor.geojson/csv->geojson (str data-dir f ".csv")
+                                           (str data-dir f ".js")))
+     ["bexley_wellbeing"
+      "cambridge_wellbeing"
+      "hackney_wellbeing"]))
+
   ;; private choropleth
   (let [data-dir "/home/bld/data/data_stentor/private/choropleth/"]
     (map

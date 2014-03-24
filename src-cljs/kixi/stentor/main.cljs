@@ -69,6 +69,7 @@
 
                     ;; WARM
                     {:label "Bexley Resilience (WARM)" :value "bexley_resilience"}
+                    {:label "Bexley Wellbeing (WARM)" :value "bexley_wellbeing"}
                     
                     ;; Crime
                     {:label "Bexley Anti-social Behaviour" :value "bexley_crime_scrub_Anti-social_behaviour"}
@@ -105,6 +106,7 @@
                     
                     ;; WARM
                     {:label "Cambridge Resilience (WARM)" :value "cambridge_resilience"}
+                    {:label "Cambridge Wellbeing (WARM)" :value "cambridge_wellbeing"}
 
                     ;; Crime
                     {:label "Cambridge Anti-social Behaviour" :value "cambridge_crime_scrub_Anti-social_behaviour"}
@@ -137,6 +139,7 @@
                     
                     ;; WARM
                     {:label "Hackney Resilience (WARM)" :value "hackney_resilience"}
+                    {:label "Hackney Wellbeing (WARM)" :value "hackney_wellbeing"}
                     
                     ;; Crime
                     {:label "Hackney Anti-social Behaviour" :value "hackney_crime_scrub_Anti-social_behaviour"}
