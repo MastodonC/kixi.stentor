@@ -219,7 +219,7 @@
                                            (fn [feature]
                                              (js-obj
                                               "fillColor"
-                                              (color/brewer :Blues 7 (aget feature "properties" "bucket"))
+                                              (color/brewer :Blues 7 (.. feature -properties -bucket))
                                               "weight" 1
                                               "opacity" 0.8
                                               "color" "#08306b"
@@ -259,7 +259,7 @@
                                            #js {:style
                                                 (fn [feature]
                                                   #js {:fillColor
-                                                       (color/brewer :PuR 7 (aget feature "properties" "bucket"))
+                                                       (color/brewer :PuR 7 (.. feature -properties -bucket))
                                                        :weight 1
                                                        :color "#eee"
                                                        :fillOpacity 0.8}
@@ -270,7 +270,7 @@
                                                   (.on layer
                                                        #js {:click
                                                             (fn [e]
-                                                              (let [props (aget e "target" "feature" "properties")]
+                                                              (let [props (.. e -target -feature -properties)]
                                                                 (om/update! data :area-feature-data props)))}))}))]
                        (om/update! data :area-layer-value value)
                        (om/update! data :area-layer-to-remove (:area-layer @data))
