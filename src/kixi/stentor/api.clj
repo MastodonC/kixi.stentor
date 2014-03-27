@@ -23,12 +23,8 @@
    [kixi.stentor.colorbrewer :as color]
    [clojure.edn :as edn]
    [com.stuartsierra.component :as component]
-   [kixi.stentor.database :refer (store-map! get-map index)]
-   [modular.entrance
-    :refer (new-session-based-request-authorizer
-            new-http-based-request-authorizer
-            authorized-request?
-            new-composite-disjunctive-request-authorizer)]))
+   [cylon.liberator :refer (make-composite-authorizer)]
+   [kixi.stentor.database :refer (store-map! get-map index)]))
 
 ;; Bucketing
 (defn bucket [v min max steps]
@@ -58,7 +54,7 @@
 ;; POI
 
 (defresource poi-data [dir authorizer handlers]
-  :authorized? (fn [{request :request}] (authorized-request? authorizer request))
+  :authorized? authorizer
   :available-media-types ["application/json"]
   :exists? (fn [{{{:keys [path]} :route-params} :request}]
              (when-let [res (io/file dir (str path ".js"))]
@@ -71,37 +67,26 @@
 
 (defn make-poi-api-handlers [dir authorizer]
   (let [p (promise)]
-    @(deliver p
-              {:data (poi-data dir authorizer p)})))
+    @(deliver p {:data (poi-data dir authorizer p)})))
 
 (defn make-poi-api-routes [handlers]
   [""
    [[[:path] (:data handlers)]]])
 
-(defrecord PoiApiRoutes [dir context]
-  component/Lifecycle
-  (start [this]
-    (let [authorizer (get-in this [:api-authorizer :authorizer])]
-      (when-not authorizer (throw (ex-info "No authorizer!" {:this this})))
-      (assoc this :routes ["" (->WrapMiddleware
-                               [(make-poi-api-routes (make-poi-api-handlers dir authorizer))]
-                               wrap-cookies)])))
-  (stop [this] this)
-
-  BidiRoutesContributor
-  (routes [this] (:routes this))
-  (context [this] context))
-
 (defn new-poi-api-routes [dir context]
   (assert dir "No data dir")
   (assert (.exists (io/file dir)) (format "Directory doesn't exist: %s" dir))
-  (->PoiApiRoutes dir context))
+  (component/using
+             (new-bidi-routes
+              #(->> % :protection-system make-composite-authorizer
+                    (make-poi-api-handlers dir) make-poi-api-routes)
+              :context context)
+             [:protection-system]))
 
 ;; Area
 
 (defresource area-data [dir authorizer handlers]
-  :authorized? (fn [{request :request}]
-                 (authorized-request? authorizer request))
+  :authorized? authorizer
   :available-media-types ["application/json"]
   :exists? (fn [{{{:keys [path]} :route-params} :request}]
              (when-let [res (io/file dir (str path ".js"))]
@@ -114,36 +99,26 @@
 
 (defn make-area-api-handlers [dir authorizer]
   (let [p (promise)]
-    @(deliver p
-              {:data (area-data dir authorizer p)})))
+    @(deliver p {:data (area-data dir authorizer p)})))
 
 (defn make-area-api-routes [handlers]
   [""
    [[[:path] (:data handlers)]]])
 
-(defrecord AreaApiRoutes [dir context]
-  component/Lifecycle
-  (start [this]
-    (let [authorizer (get-in this [:api-authorizer :authorizer])]
-      (when-not authorizer (throw (ex-info "No authorizer!" {:this this})))
-      (assoc this :routes ["" (->WrapMiddleware
-                               [(make-area-api-routes (make-area-api-handlers dir authorizer))]
-                               wrap-cookies)])))
-  (stop [this] this)
-
-  BidiRoutesContributor
-  (routes [this] (:routes this))
-  (context [this] context))
-
 (defn new-area-api-routes [dir context]
   (assert dir "No data dir")
   (assert (.exists (io/file dir)) (format "Directory doesn't exist: %s" dir))
-  (->AreaApiRoutes dir context))
+  (component/using
+             (new-bidi-routes
+              #(->> % :protection-system make-composite-authorizer
+                    (make-area-api-handlers dir) make-area-api-routes)
+              :context context)
+             [:protection-system]))
 
 ;; Load/Save maps
 
 (defresource maps-index [handlers database authorizer]
-  :authorized? (fn [{request :request}] {:auth-request (authorized-request? authorizer request)})
+  :authorized? authorizer
   :available-media-types ["application/edn"]
   :handle-ok (fn [{{username :username} :auth-request}]
                (assert username)
@@ -151,7 +126,7 @@
                  (assoc (get-map database username map) :map map))))
 
 (defresource maps-item [handlers database authorizer]
-  :authorized? (fn [{request :request}] {:auth-request (authorized-request? authorizer request)})
+  :authorized? authorizer
   :allowed-methods #{:get :put}
   :available-media-types ["application/edn"]
   :handle-ok "Here's a map"
@@ -172,22 +147,14 @@
   ["" [["" (:index handlers)]
        [["/" :map] (:map handlers)]]])
 
-(defrecord MainRoutes [context]
-  component/Lifecycle
-  (start [this]
-    (let [database (get-in this [:database])
-          authorizer (get-in this [:api-authorizer :authorizer])]
-      (when-not database (throw (ex-info "No database!" {:this this})))
-      (when-not authorizer (throw (ex-info "No authorizer!" {:this this})))
-      (assoc this
-        :routes ["" (->WrapMiddleware
-                     [(make-maps-api-routes (make-maps-api-handlers database authorizer))]
-                     wrap-cookies)])))
-  (stop [this] this)
-
-  BidiRoutesContributor
-  (routes [this] (:routes this))
-  (context [this] context))
-
 (defn new-maps-api-routes [context]
-  (->MainRoutes context))
+  (component/using
+   (new-bidi-routes
+    (fn [component]
+      (->> component
+           :protection-system
+           make-composite-authorizer
+           (make-maps-api-handlers (:database component))
+           make-maps-api-routes))
+    :context context)
+   [:protection-system :database]))

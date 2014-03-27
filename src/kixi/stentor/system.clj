@@ -34,14 +34,10 @@
 
    [kixi.stentor.database :refer (Database)]
 
+   [cylon.core :refer (new-default-protection-system add-user!)]
+
    ;; Accessing the API as a client
    [org.httpkit.client :refer (request) :rename {request http-request}]
-
-   [modular.entrance :refer (new-map-backed-user-registry
-                             new-atom-backed-session-store
-                             new-session-based-request-authorizer
-                             new-http-based-request-authorizer
-                             new-composite-disjunctive-request-authorizer)]
 
    ;; Misc
    clojure.tools.reader
@@ -115,7 +111,9 @@
 (defrecord TestData [user password]
   component/Lifecycle
   (start [this]
-    (println "Load test data")
+    (add-user!
+     (-> this :protection-system :user-password-authorizer)
+     user password)
     (put-map "city" user password :latlng [51.505 -0.09] :zoom 13 :poi "rent_arrears_anon" :area "hackney-employment")
     (put-map "tenure" user password :latlng [51.505 -0.09] :zoom 10 :poi nil :area "tenure_oa_hackney")
     (println @(http-request
@@ -174,21 +172,6 @@
   (assert (.isDirectory dir) (format "dbdir exists, but isn't a directory: %s" dir))
   (->FileBackedDatabase dir))
 
-(defrecord ApiAuthorizer []
-  component/Lifecycle
-  (start [this]
-    (let [sessions (get this :http-session-store)
-          users (get this :user-registry)]
-      (when-not sessions (throw (ex-info "No session store!" {:this this})))
-      (when-not users (throw (ex-info "No user registry!" {:this this})))
-      (assoc this :authorizer (new-composite-disjunctive-request-authorizer
-                               (new-session-based-request-authorizer :http-session-store sessions)
-                               (new-http-based-request-authorizer :user-password-authorizer users)))))
-  (stop [this] this))
-
-(defn new-api-authorizer []
-  (->ApiAuthorizer))
-
 (defn new-system []
   (let [cfg (config)
         dbdir (:dbdir cfg)
@@ -201,17 +184,18 @@
     (-> (component/system-map
          :web-server (new-webserver (:web-server cfg))
          :bidi-ring-handler (new-bidi-ring-handler-provider)
-         :main-routes (new-main-routes)
-         :user-registry (new-map-backed-user-registry users)
 
-         :api-authorizer (new-api-authorizer)
-         :http-session-store (new-atom-backed-session-store
-                              (or (:session-timeout-in-seconds cfg)
-                                  (* 60 10))) ; default to 10 mins
+         :protection-system
+         (new-default-protection-system
+          :password-file (io/file dbdir "passwords.edn"))
+
+         :main-routes (new-main-routes "")
 
          :poi-api-routes (new-poi-api-routes (get-in cfg [:data-dir :poi]) "/data/geojson-poi/")
          :area-api-routes (new-area-api-routes (get-in cfg [:data-dir :area]) "/data/geojson-area/")
+         ;; TODO Add wrap-cookies
          :maps-api-routes (new-maps-api-routes "/maps")
+
          :cljs-routes (new-cljs-routes (:cljs-builder cfg))
 
          :database (if dbdir
@@ -220,15 +204,15 @@
 
          :cljs-builder (new-cljs-builder)
 
-         ;; For testing, let's just borrow the credentials of one of our users
-         ;; :test-data (new-test-data (zipmap [:user :password] (first (seq users))))
-         :test-data (new-test-data {:user "bob" :password (get users "bob")}))
+         ;; The test data component actually creates its own user. This
+         ;; doesn't yet DELETE the user afterwards, so could leave it
+         ;; around in a real system. Fix this by adding a delete-user!
+         ;; to Cylon. Whoops, I think I just volunteered!
+         :test-data (new-test-data {:user "test" :password "battlestar"})
+         )
 
-        (mod/system-using {:cljs-routes [:cljs-builder]
-                           :test-data [:web-server]
-                           :maps-api-routes [:database :api-authorizer]
-                           :area-api-routes [:api-authorizer]
-                           :poi-api-routes [:api-authorizer]
-                           :main-routes [:user-registry :http-session-store]
-                           :api-authorizer [:http-session-store :user-registry]
-                           }))))
+        (mod/system-using {;;:cljs-routes [:cljs-builder]
+                           :test-data [:web-server :protection-system]
+                           :maps-api-routes [:database :protection-system]
+                           :main-routes [:protection-system]}
+                          ))))

@@ -16,101 +16,29 @@
   (:require
    [modular.http-kit :refer (new-webserver)]
    [modular.bidi :refer (new-bidi-routes new-bidi-ring-handler-provider)]
-   [bidi.bidi :as bidi :refer (path-for ->WrapMiddleware)]
+   [bidi.bidi :as bidi :refer (path-for ->Redirect ->ResourcesMaybe)]
    [clojure.java.io :as io]
    [hiccup.core :refer (html)]
    [ring.middleware.params :refer (wrap-params)]
    [ring.middleware.cookies :refer (wrap-cookies)]
-   [modular.entrance :refer (protect
-                             ->BidiFailedAuthorizationRedirect
-                             authorized-user?
-                             HttpRequestAuthorizer
-                             UserPasswordAuthorizer
-                             HttpSessionStore
-                             new-session-based-request-authorizer
-                             start-session! get-session)]
+   [cylon.core :refer (new-protected-bidi-routes)]
    [com.stuartsierra.component :as component]))
 
-(defn- index [handlers-p]
+(defn- index [handlers]
   (fn [req]
     {:status 200 :body (slurp (io/resource "index.html"))}))
 
-(defn- login-form [handlers]
-  (fn [{{{requested-uri :value} "requested-uri"} :cookies
-        routes :modular.bidi/routes}]
-    {:status 200
-     :body
-     (html
-      [:body
-       [:h1 "Login"]
-       [:form {:method "POST" :style "border: 1px dotted #555"
-               :action (bidi/path-for routes (:login-handler @handlers))}
-        (when requested-uri
-          [:input {:type "hidden" :name :requested-uri :value requested-uri}])
-        [:div
-         [:label {:for "username"} "Username"]
-         [:input {:id "username" :name "username" :type "input"}]]
-        [:div
-         [:label {:for "password"} "Password"]
-         [:input {:id "password" :name "password" :type "password"}]]
-        [:input {:type "submit" :value "Login"}]
-        ]]
-      )}))
-
-(defn- login-handler [handlers {:keys [registry sessions]}]
-  (assert (satisfies? UserPasswordAuthorizer registry))
-  (assert (satisfies? HttpSessionStore sessions))
-  (fn [{{username "username" password "password" requested-uri "requested-uri"} :form-params
-        routes :modular.bidi/routes}]
-    (if (and username
-             (not-empty username)
-             (authorized-user? registry (.trim username) password))
-      {:status 302
-       :headers {"Location" requested-uri}
-       :cookies (start-session! sessions username)}
-
-      ;; Return back to login form
-      {:status 302
-       :headers {"Location" (path-for routes (:login-form @handlers))}
-       })))
-
-(defn make-handlers [opts]
+(defn make-main-handlers []
   (let [p (promise)]
-    @(deliver p
-              {:index (index p)
-               :login-form (login-form p)
-               :login-handler (login-handler p opts)})))
+    @(deliver p {:index (index p)})))
 
-(defn make-routes [handlers {:keys [sessions]}]
+(defn make-main-routes [handlers]
   ["/"
-   [["login" (->WrapMiddleware
-              {:get (:login-form handlers)
-               :post (->WrapMiddleware (:login-handler handlers)
-                                       wrap-params)}
-              wrap-cookies)]
-    [""
-     (protect
-      [["" (:index handlers)]
-       ["" (bidi/->ResourcesMaybe {})]]
-      :authorizer (new-session-based-request-authorizer :http-session-store sessions)
-      :fail-handler (->BidiFailedAuthorizationRedirect (:login-form handlers))
-      )]]])
+   [["" (->Redirect 307 (:index handlers))]
+    ["index.html" (:index handlers)]
+    ["" (bidi/->ResourcesMaybe {})]]])
 
-;; Requires :user-registry, :http-session-store
-(defrecord MainRoutes []
-  component/Lifecycle
-  (start [this]
-    (let [registry (get-in this [:user-registry])
-          sessions (get-in this [:http-session-store])]
-      (when-not registry (throw (ex-info "No user registry!" {:this this})))
-      (when-not sessions (throw (ex-info "No HTTP session store!" {:this this})))
-      (let [opts {:registry registry
-                  :sessions sessions}]
-        (assoc this :routes (-> opts make-handlers (make-routes opts))))))
-  (stop [this] this)
-
-  modular.bidi/BidiRoutesContributor
-  (routes [this] (:routes this))
-  (context [this] ""))
-
-(defn new-main-routes [] (->MainRoutes))
+(defn new-main-routes [context]
+  (new-protected-bidi-routes
+   (make-main-routes (make-main-handlers))
+   :context context))

@@ -28,9 +28,10 @@
                  ;; EDN reader with location metadata
                  [org.clojure/tools.reader "0.8.3"]
                  [juxt.modular/http-kit "0.2.0"]
-                 [juxt.modular/bidi "0.2.0"]
+                 [juxt.modular/bidi "0.2.1"]
+                 [juxt/modular "0.2.0"]
                  ;; [juxt/modular.cljs-builder "0.1.0-SNAPSHOT"]
-                 [juxt.modular/entrance "0.2.2"]
+                 [cylon "0.1.0"]
 
                  ;; AJAX
                  [cljs-ajax "0.2.3"]
@@ -61,7 +62,7 @@
 
   :source-paths ["src" "src-cljs"]
 
-  ;; Keep this while we are stlil using lein cljsbuild auto
+  ;; Keep this while we are still using lein cljsbuild auto
   :cljsbuild {
     :builds [{:id "dev"
               :source-paths ["src-cljs"]

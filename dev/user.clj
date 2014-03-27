@@ -15,28 +15,29 @@
 (ns user
   (:require
    [com.stuartsierra.component :as component]
-   [clojure.tools.namespace.repl :refer [refresh refresh-all]]
-   [kixi.stentor.system :as stentor]
+   [clojure.tools.namespace.repl :refer (refresh refresh-all)]
+   [kixi.stentor.system :refer (new-system)]
    [clojure.pprint :refer (pprint)]
    [clojure.reflect :refer (reflect)]
    [clojure.repl :refer (apropos dir doc find-doc pst source)]
-   modular))
+   [modular :refer (system)]
+   [cylon.core :as cylon]))
 
 (defn init
   "Constructs the current development system."
   []
-  (alter-var-root #'modular/system
-    (constantly (stentor/new-system))))
+  (alter-var-root #'system
+    (constantly (new-system))))
 
 (defn start
   "Starts the current development system."
   []
-  (alter-var-root #'modular/system component/start))
+  (alter-var-root #'system component/start))
 
 (defn stop
   "Shuts down and destroys the current development system."
   []
-  (alter-var-root #'modular/system
+  (alter-var-root #'system
                   (fn [s] (when s (component/stop s)))))
 
 (defn go
@@ -48,3 +49,12 @@
 (defn reset []
   (stop)
   (refresh :after 'user/go))
+
+(defn add-user!
+  "Create a new user in the protection system. For existing user, the
+  given password will replace the old one, so this function can be used
+  for resetting passwords too."
+  [uid pw]
+  (cylon/add-user!
+   (-> system :protection-system :user-password-authorizer)
+   uid pw))
