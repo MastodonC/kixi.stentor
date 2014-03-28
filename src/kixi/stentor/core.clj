@@ -21,7 +21,7 @@
    [hiccup.core :refer (html)]
    [ring.middleware.params :refer (wrap-params)]
    [ring.middleware.cookies :refer (wrap-cookies)]
-   [cylon.core :refer (new-protected-bidi-routes)]
+   [cylon.core :refer (new-protected-bidi-routes new-optionally-protected-bidi-routes)]
    [com.stuartsierra.component :as component]))
 
 (defn- index [handlers]
@@ -39,6 +39,6 @@
     ["" (bidi/->ResourcesMaybe {})]]])
 
 (defn new-main-routes [context]
-  (new-protected-bidi-routes
+  (new-optionally-protected-bidi-routes
    (make-main-routes (make-main-handlers))
    :context context))
