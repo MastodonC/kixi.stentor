@@ -441,6 +441,7 @@
     (render [this]
       (html
        [:div
+        [:h1 "Stentor"]
         (om/build points-of-interest-component app-state)
         (om/build area-component app-state)
         (om/build area-info-component app-state)
