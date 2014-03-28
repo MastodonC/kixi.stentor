@@ -22,6 +22,7 @@
    [kixi.stentor.core :refer (new-main-routes)]
    [kixi.stentor.api :refer (new-poi-api-routes new-area-api-routes new-maps-api-routes)]
    [kixi.stentor.cljs :refer (new-cljs-routes)]
+   kixi.stentor.safe
 
    ;; Modular reusable components
    [modular.core :as mod]
@@ -60,27 +61,42 @@
       (cljs/step-configure-module :hecuba ['kixi.stentor.main] #{:cljs})
       ))
 
+
 (defn compile-cljs
   "build the project, wait for file changes, repeat"
   [& args]
-  (let [state (-> (cljs/init-state)
-                  (cljs/enable-source-maps)
-                  (assoc :optimizations :none
-                         :pretty-print true
-                         :work-dir (io/file "target/cljs-work") ;; temporary output path, not really needed
-                         :public-dir (io/file "target/cljs") ;; where should the output go
-                         :public-path "/cljs") ;; whats the path the html has to use to get the js?
-                  (cljs/step-find-resources-in-jars) ;; finds cljs,js in jars from the classpath
-                  (cljs/step-find-resources "lib/js-closure" {:reloadable false})
-                  (cljs/step-find-resources "src-cljs") ;; find cljs in this path
-                  (cljs/step-finalize-config) ;; shouldn't be needed but is at the moment
-                  (cljs/step-compile-core) ;; compile cljs.core
-                  (define-modules)
-                  )]
 
-    (-> state
-        (cljs/step-compile-modules)
-        (cljs/flush-unoptimized)))
+  (let [state (if-let [s kixi.stentor.safe/cljs-compiler-state]
+                (do
+                  (println "CLJS: Using existing state")
+                  s)
+                (do
+                  (println "CLJS: Creating new state")
+                  (-> (cljs/init-state)
+                      (cljs/enable-source-maps)
+                      (assoc :optimizations :none
+                             :pretty-print true
+                             :work-dir (io/file "target/cljs-work") ;; temporary output path, not really needed
+                             :public-dir (io/file "target/cljs") ;; where should the output go
+                             :public-path "/cljs") ;; whats the path the html has to use to get the js?
+                      (cljs/step-find-resources-in-jars) ;; finds cljs,js in jars from the classpath
+                      (cljs/step-find-resources "lib/js-closure" {:reloadable false})
+                      (cljs/step-find-resources "src-cljs") ;; find cljs in this path
+                      (cljs/step-finalize-config) ;; shouldn't be needed but is at the moment
+                      (cljs/step-compile-core)    ;; compile cljs.core
+                      (define-modules)
+                      )))]
+
+    (alter-var-root #'kixi.stentor.safe/cljs-compiler-state
+                    (fn [_]
+                      (-> state
+                          (cljs/step-reload-modified)
+                          (cljs/step-compile-modules)
+                          (cljs/flush-unoptimized))))
+
+    (alter-var-root #'kixi.stentor.safe/cljs-compiler-compile-count inc)
+
+    (println (format "Compiled %d times" kixi.stentor.safe/cljs-compiler-compile-count)))
 
   :done)
 
