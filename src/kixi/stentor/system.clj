@@ -212,7 +212,5 @@
          )
 
         (mod/system-using {;;:cljs-routes [:cljs-builder]
-                           :test-data [:web-server :protection-system]
-                           :maps-api-routes [:database :protection-system]
-                           :main-routes [:protection-system]}
+                           :test-data [:web-server :protection-system]}
                           ))))
