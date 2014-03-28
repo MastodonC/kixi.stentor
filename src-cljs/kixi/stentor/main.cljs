@@ -199,6 +199,17 @@
 (defn get-color [scheme steps idx]
   (color/brewer scheme steps idx))
 
+;; When we get a 401 go to the login screen
+(defn authz-error-handler []
+  (println "Authorization failure. Redirecting to login.")
+  (.. js/window -location (replace "login")))
+
+;; Ajax Error Handler
+(defn error-handler [response]
+  (if (= 401 (:status response))
+    (authz-error-handler response)
+    (println (str "Error: " response))))
+
 (defn update-poi [data value]
   (if-not value
     (do
@@ -239,6 +250,7 @@
                       (om/update! data :poi-layer-value value)
                       (om/update! data :poi-layer-to-remove (:poi-layer @data))
                       (om/update! data :poi-layer-to-add layer)))
+         :error-handler error-handler
          :response-format :json})))
 
 (defn update-area [data value]
