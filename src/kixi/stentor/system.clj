@@ -187,7 +187,9 @@
 
          :protection-system
          (new-default-protection-system
-          :password-file (io/file dbdir "passwords.edn"))
+          :password-file (io/file dbdir "passwords.edn")
+          ;; 1 hour time out by default
+          :session-timeout-in-seconds (* 60 60))
 
          :main-routes (new-main-routes "")
 
