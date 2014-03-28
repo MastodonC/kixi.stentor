@@ -207,7 +207,7 @@
 ;; Ajax Error Handler
 (defn error-handler [response]
   (if (= 401 (:status response))
-    (authz-error-handler response)
+    (authz-error-handler)
     (println (str "Error: " response))))
 
 (defn update-poi [data value]
