@@ -57,7 +57,7 @@
                     {:label "Bexley Recycled Waste Non-paper" :value "bexley_recycledwastenonpaper"}
                     {:label "Bexley Recycled Waste Paper" :value "bexley_recycledwastepaper"}
                     {:label "Bexley Residual Waste" :value "bexley_residualwaste"}
-                    
+
                     ;; Accommodation
                     {:label "Bexley Percent Over Occupied" :value "bexley_occupancy"}
                     {:label "Bexley Percent Social Rented" :value "bexley_tenure"}
@@ -71,7 +71,7 @@
                     ;; WARM
                     {:label "Bexley Resilience (WARM)" :value "bexley_resilience"}
                     {:label "Bexley Wellbeing (WARM)" :value "bexley_wellbeing"}
-                    
+
                     ;; Crime
                     {:label "Bexley Anti-social Behaviour" :value "bexley_crime_scrub_Anti-social_behaviour"}
                     {:label "Bexley Burglary" :value "bexley_crime_scrub_Burglary"}
@@ -83,17 +83,17 @@
                     {:label "Bexley Shoplifting" :value "bexley_crime_scrub_Shoplifting"}
                     {:label "Bexley Vehicle Crime" :value "bexley_crime_scrub_Vehicle_crime"}
                     {:label "Bexley Total Crime" :value "bexley_crime_scrub_Total_crime"}
-                                        
+
                     ;;
                     ;; Cambridge
                     {:label "Cambridge Broadband Speed" :value "cambridge_broadband_speed"}
                     {:label "Cambridge Future Broadband" :value "cambridge_futurebroadband"}
-                    
+
                     {:label "Cambridge Employment" :value "cambridge_employment"}
                     {:label "Cambridge National Insurance Registrations" :value "cambridge_nino"}
                     {:label "Cambridge Demographics Library Users" :value "cambridge_demographicslibraryusers"}
                     {:label "Cambridge Demographics Library Visits" :value "cambridge_demographicslibraryvisits"}
-                    
+
                     ;; Accommodation
                     {:label "Cambridge Percent Flats (vs Houses)" :value "cambridge_accommodation_type"}
                     {:label "Cambridge Percent Over Occupied" :value "cambridge_occupancy"}
@@ -104,7 +104,7 @@
                     {:label "Cambridge Community Cohesion" :value "cambridge_communitycohesion"}
                     {:label "Cambridge Community Safety" :value "cambridge_communitysafety"}
                     {:label "Cambridge Taking Part" :value "cambridge_takingpart"}
-                    
+
                     ;; WARM
                     {:label "Cambridge Resilience (WARM)" :value "cambridge_resilience"}
                     {:label "Cambridge Wellbeing (WARM)" :value "cambridge_wellbeing"}
@@ -120,28 +120,28 @@
                     {:label "Cambridge Shoplifting" :value "cambridge_crime_scrub_Shoplifting"}
                     {:label "Cambridge Vehicle Crime" :value "cambridge_crime_scrub_Vehicle_crime"}
                     {:label "Cambridge Total Crime" :value "cambridge_crime_scrub_Total_crime"}
-                                        
+
                     ;;
                     ;; Hackney
                     {:label "Hackney Broadband Speed" :value "hackney_broadband_speed"}
                     {:label "Hackney Employment" :value "hackney_employment"}
                     {:label "Hackney National Insurance Registrations" :value "hackney_nino"}
-                    
+
                     ;; Accommodation
                     {:label "Hackney Percent Flats (vs Houses)" :value "hackney_accommodation_type"}
                     {:label "Hackney Percent Social Rented" :value "hackney_tenure"}
                     {:label "Hackney Percent Over Occupied" :value "hackney_occupancy"}
-                    
+
                     ;; Community
                     {:label "Hackney Belonging" :value "hackney_belonging"}
                     {:label "Hackney Community Cohesion" :value "hackney_communitycohesion"}
                     {:label "Hackney Community Safety" :value "hackney_communitysafety"}
                     {:label "Hackney Taking Part" :value "hackney_takingpart"}
-                    
+
                     ;; WARM
                     {:label "Hackney Resilience (WARM)" :value "hackney_resilience"}
                     {:label "Hackney Wellbeing (WARM)" :value "hackney_wellbeing"}
-                    
+
                     ;; Crime
                     {:label "Hackney Anti-social Behaviour" :value "hackney_crime_scrub_Anti-social_behaviour"}
                     {:label "Hackney Burglary" :value "hackney_crime_scrub_Burglary"}
@@ -235,11 +235,11 @@
                                               "opacity" 0.8
                                               "color" "#08306b"
                                               "fillOpacity" 0.6))
-                                           
+
                                            "onEachFeature"
                                            (fn [feature layer]
                                              (.on layer #js {:click (fn [e] (println "Event: " e))}))
-                                           
+
                                            "pointToLayer"
                                            (fn [feature latlng]
                                              (-> js/L
@@ -276,7 +276,7 @@
                                                        :color "#eee"
                                                        :fillOpacity 0.8}
                                                   )
-                                                    
+
                                                 :onEachFeature
                                                 (fn [feature layer]
                                                   (.on layer
@@ -326,7 +326,7 @@
         (html
          [:section
           [:h2 "Info"]
-          ;; [:p "Descriptive text about " (:label (:area-selector data))]         
+          ;; [:p "Descriptive text about " (:label (:area-selector data))]
           [:p [:strong "Area: "]
            (get props :LSOA11CD (get props :OA11CD (get props :MSOA11CD "None Selected")))
            " "
@@ -508,7 +508,7 @@
           ;; FIXME: Is this the right place to do this?
           ;; blat the area-feature-data when the layer changes
           (om/update! app-state :area-feature-data nil)
-          
+
           (om/update! app-state :area-layer-to-remove nil)
           (om/update! app-state :area-layer nil))
 
@@ -521,7 +521,7 @@
           (.addLayer leaflet-map layer)
           ;; snap to the layer bounds when layer is not in viewport
           (when-not (.intersects (.getBounds leaflet-map) (.getBounds layer))
-            (.fitBounds leaflet-map (.getBounds layer))) 
+            (.fitBounds leaflet-map (.getBounds layer)))
           (om/update! app-state :area-layer-to-add nil)
           (om/update! app-state :area-layer layer))
 
