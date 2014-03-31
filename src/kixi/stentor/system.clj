@@ -209,8 +209,8 @@
 
          :main-routes (new-main-routes "")
 
-         :poi-api-routes (new-poi-api-routes (get-in cfg [:data-dir :poi]) "/data/geojson-poi/")
-         :area-api-routes (new-area-api-routes (get-in cfg [:data-dir :area]) "/data/geojson-area/")
+         :poi-api-routes (new-poi-api-routes (get-in cfg [:data-dir :poi]) "/data/geojson-poi")
+         :area-api-routes (new-area-api-routes (get-in cfg [:data-dir :area]) "/data/geojson-area")
          ;; TODO Add wrap-cookies
          :maps-api-routes (new-maps-api-routes "/maps")
 

@@ -19,7 +19,7 @@
    [bidi.bidi :refer (->WrapMiddleware)]
    [liberator.core :refer (defresource)]
    [cheshire.core :as json]
-   [ring.middleware.cookies :refer (wrap-cookies)]
+   [ring.middleware.cookies :refer (cookies-request)]
    [kixi.stentor.colorbrewer :as color]
    [clojure.edn :as edn]
    [com.stuartsierra.component :as component]
@@ -70,13 +70,28 @@
                      (json/parse-stream keyword)
                      buckets))))
 
+(defresource poi-index [authorizer]
+  :authorized? dummy-authorizer
+  :available-media-types ["application/edn"]
+  :handle-ok (fn [context]
+               (let [public-poi [{:label "PUBLIC! Hackney Schools Population (Dummy Data)" :value "schools_hackney"}]
+                     session (-> context :request cookies-request :cookies (get "session") :value)]
+                 (println "Req Keys: " (-> context :request))
+                 (println "Headers: " (-> context :request :headers))
+                 (println "Session: " session)
+                 ;;(println  (-> system :protection-system :http-session-store :sessions deref (get session) :username))
+                 (if username
+                   [{:label "PRIVATE! Hackney Schools Population (Dummy Data)" :value "schools_hackney"}]
+                   public-poi))))
+
 (defn make-poi-api-handlers [dir authorizer]
   (let [p (promise)]
-    @(deliver p {:data (poi-data dir authorizer p)})))
+    @(deliver p {:index (poi-index authorizer)
+                 :data (poi-data dir authorizer p)})))
 
 (defn make-poi-api-routes [handlers]
-  [""
-   [[[:path] (:data handlers)]]])
+  ["" [["" (:index handlers)]
+       [["/" :path] (:data handlers)]]])
 
 (defn new-poi-api-routes [dir context]
   (assert dir "No data dir")
@@ -111,7 +126,7 @@
 
 (defn make-area-api-routes [handlers]
   [""
-   [[[:path] (:data handlers)]]])
+   [[["/" :path] (:data handlers)]]])
 
 (defn new-area-api-routes [dir context]
   (assert dir "No data dir")
@@ -169,3 +184,4 @@
            make-maps-api-routes))
     :context context)
    [:protection-system :database]))
+

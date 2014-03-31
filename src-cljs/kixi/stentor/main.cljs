@@ -293,8 +293,16 @@
           :error-handler #(error-handler %)
           :response-format :json})))
 
+(defn get-poi [data]
+  (GET "/data/geojson-poi"
+       {:response-format :edn
+        :handler #(om/update! data :poi-selector %)
+        :error-handler #(println "Public POI Only: " %)}))
+
 (defn points-of-interest-component [data owner]
   (reify
+    om/IDidMount
+    (did-mount [this] (get-poi data))
     om/IRenderState
     (render-state [this state]
       (html
