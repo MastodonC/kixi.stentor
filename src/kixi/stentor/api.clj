@@ -70,23 +70,31 @@
                      (json/parse-stream keyword)
                      buckets))))
 
-(defresource poi-index [authorizer]
+(defn session-id->session-details [session system]
+  (-> system
+      :protection-system
+      :http-session-store
+      :sessions
+      deref
+      (get session)))
+
+(defresource poi-index [component authorizer]
   :authorized? dummy-authorizer
   :available-media-types ["application/edn"]
   :handle-ok (fn [context]
                (let [public-poi [{:label "PUBLIC! Hackney Schools Population (Dummy Data)" :value "schools_hackney"}]
-                     session (-> context :request cookies-request :cookies (get "session") :value)]
-                 (println "Req Keys: " (-> context :request))
-                 (println "Headers: " (-> context :request :headers))
-                 (println "Session: " session)
-                 ;;(println  (-> system :protection-system :http-session-store :sessions deref (get session) :username))
+                     session (-> context :request cookies-request :cookies (get "session") :value)
+                     session-details (session-id->session-details session component)
+                     username (:username session-details)]
+                 (println "Session Details:" session-details)
+                 (println "System: " component)
                  (if username
                    [{:label "PRIVATE! Hackney Schools Population (Dummy Data)" :value "schools_hackney"}]
                    public-poi))))
 
-(defn make-poi-api-handlers [dir authorizer]
+(defn make-poi-api-handlers [dir component authorizer]
   (let [p (promise)]
-    @(deliver p {:index (poi-index authorizer)
+    @(deliver p {:index (poi-index component authorizer)
                  :data (poi-data dir authorizer p)})))
 
 (defn make-poi-api-routes [handlers]
@@ -98,11 +106,12 @@
   (assert (.exists (io/file dir)) (format "Directory doesn't exist: %s" dir))
   (component/using
              (new-bidi-routes
-              #(->> %
-                    :protection-system
-                    make-composite-authorizer
-                    (make-poi-api-handlers dir)
-                    make-poi-api-routes)
+              (fn [component]
+                (->> component
+                     :protection-system
+                     make-composite-authorizer
+                     (make-poi-api-handlers dir component)
+                     make-poi-api-routes))
               :context context)
              [:protection-system]))
 
