@@ -30,8 +30,10 @@
   (atom
    {:poi-layer-value nil
     :poi-layer nil
-    :poi-selector [{:label "Cambridge Library Computer Use Last Year" :value "cambridge_librarycomputeruselastyear"}
-                   {:label "Cambridge Digitally Excluded" :value "cambridge_digitallyexcluded"}]
+    :poi-selector [{:label "Hackney Schools Population (Dummy Data)" :value "schools_hackney"}
+                   ;; {:label "Cambridge Library Computer Use Last Year" :value "cambridge_librarycomputeruselastyear"}
+                   ;; {:label "Cambridge Digitally Excluded" :value "cambridge_digitallyexcluded"}
+                   ]
     ;; [ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;  ;; Hackney
     ;;  {:label "Hackney Real Time Complaints" :value "hackney_complaints_locations_anon"}
@@ -54,9 +56,9 @@
                     {:label "Bexley Broadband Speed" :value "bexley_broadband_speed"}
 
                     ;; Waste
-                    {:label "Bexley Recycled Waste Non-paper" :value "bexley_recycledwastenonpaper"}
-                    {:label "Bexley Recycled Waste Paper" :value "bexley_recycledwastepaper"}
-                    {:label "Bexley Residual Waste" :value "bexley_residualwaste"}
+                    ;; {:label "Bexley Recycled Waste Non-paper" :value "bexley_recycledwastenonpaper"}
+                    ;; {:label "Bexley Recycled Waste Paper" :value "bexley_recycledwastepaper"}
+                    ;; {:label "Bexley Residual Waste" :value "bexley_residualwaste"}
 
                     ;; Accommodation
                     {:label "Bexley Percent Over Occupied" :value "bexley_occupancy"}
@@ -87,7 +89,7 @@
                     ;;
                     ;; Cambridge
                     {:label "Cambridge Broadband Speed" :value "cambridge_broadband_speed"}
-                    {:label "Cambridge Future Broadband" :value "cambridge_futurebroadband"}
+                    ;; {:label "Cambridge Future Broadband" :value "cambridge_futurebroadband"}
 
                     {:label "Cambridge Employment" :value "cambridge_employment"}
                     {:label "Cambridge National Insurance Registrations" :value "cambridge_nino"}
@@ -200,15 +202,16 @@
   (color/brewer scheme steps idx))
 
 ;; When we get a 401 go to the login screen
-(defn authz-error-handler []
+(defn authz-error-handler [response]
   (println "Authorization failure. Redirecting to login.")
+  (println "Error: " response)
   (.. js/window -location (replace "login")))
 
 ;;Ajax Error Handler
-(defn error-handler [response]
-  (if (= 401 (:status response))
-    (authz-error-handler)
-    (println (str "Error: " response))))
+(defn error-handler [{:keys [status status-text] :as response}]
+  (if (= 401 status)
+    (authz-error-handler response)
+    (println (str "Error: " status " " status-text))))
 
 (defn update-poi [data value]
   (if-not value
@@ -250,7 +253,7 @@
                       (om/update! data :poi-layer-value value)
                       (om/update! data :poi-layer-to-remove (:poi-layer @data))
                       (om/update! data :poi-layer-to-add layer)))
-         :error-handler error-handler
+         :error-handler #(error-handler %)
          :response-format :json})))
 
 (defn update-area [data value]
@@ -271,7 +274,7 @@
                                            #js {:style
                                                 (fn [feature]
                                                   #js {:fillColor
-                                                       (color/brewer :PuR 7 (.. feature -properties -bucket))
+                                                       (color/brewer :YlGn 7 (.. feature -properties -bucket))
                                                        :weight 1
                                                        :color "#eee"
                                                        :fillOpacity 0.8}
@@ -287,6 +290,7 @@
                        (om/update! data :area-layer-value value)
                        (om/update! data :area-layer-to-remove (:area-layer @data))
                        (om/update! data :area-layer-to-add layer)))
+          :error-handler #(error-handler %)
           :response-format :json})))
 
 (defn points-of-interest-component [data owner]
@@ -322,7 +326,6 @@
     om/IRenderState
     (render-state [this state]
       (let [props (js->clj (:area-feature-data data) :keywordize-keys true)]
-        (println "Area Layer: " (js->clj (:area-layer data)))
         (html
          [:section
           [:h2 "Info"]
@@ -381,7 +384,8 @@
 (defn get-maps [data]
   (GET "/maps"
       {:response-format :edn
-       :handler #(om/update! data :maps %)}))
+       :handler #(om/update! data :maps %)
+       :error-handler #(println "Maps not available unless logged in. " %)}))
 
 (defn save-map [data owner]
   (PUT (str "/maps/" (.toLowerCase (string/replace (om/get-state owner :mapname) #"[\s]+" "")))
@@ -402,7 +406,8 @@
                   :poi (:poi-layer-value @data)
                   :area (:area-layer-value @data)})
        :format :edn
-       :handler (fn [_] (get-maps data))}))
+       :handler (fn [_] (get-maps data))
+       :error-handler #(error-handler %)}))
 
 (defn map-saver-component [data owner]
   (reify
@@ -458,8 +463,9 @@
         (om/build area-component app-state)
         (om/build area-info-component app-state)
         (om/build postcode-selector-component app-state)
-        (om/build map-saver-component app-state)
-        (om/build map-loader-component app-state)]))))
+        ;;(om/build map-saver-component app-state)
+        ;;(om/build map-loader-component app-state)
+        ]))))
 
 (defn map-component
   "put the leaflet map as state in the om component"

@@ -26,6 +26,11 @@
    [cylon.liberator :refer (make-composite-authorizer)]
    [kixi.stentor.database :refer (store-map! get-map index)]))
 
+;; Make it public
+(defn dummy-authorizer [context]
+  ;;(println "Context: " context)
+  true)
+
 ;; Bucketing
 (defn bucket [v min max steps]
   ;; (println (format "v: %s min: %s max: %s steps:%s scheme: %s" v min max steps scheme))
@@ -54,7 +59,7 @@
 ;; POI
 
 (defresource poi-data [dir authorizer handlers]
-  :authorized? authorizer
+  :authorized? dummy-authorizer ;;authorizer
   :available-media-types ["application/json"]
   :exists? (fn [{{{:keys [path]} :route-params} :request}]
              (when-let [res (io/file dir (str path ".js"))]
@@ -78,15 +83,18 @@
   (assert (.exists (io/file dir)) (format "Directory doesn't exist: %s" dir))
   (component/using
              (new-bidi-routes
-              #(->> % :protection-system make-composite-authorizer
-                    (make-poi-api-handlers dir) make-poi-api-routes)
+              #(->> %
+                    :protection-system
+                    make-composite-authorizer
+                    (make-poi-api-handlers dir)
+                    make-poi-api-routes)
               :context context)
              [:protection-system]))
 
 ;; Area
 
 (defresource area-data [dir authorizer handlers]
-  :authorized? authorizer
+  :authorized? dummy-authorizer ;;authorizer
   :available-media-types ["application/json"]
   :exists? (fn [{{{:keys [path]} :route-params} :request}]
              (when-let [res (io/file dir (str path ".js"))]
@@ -109,9 +117,12 @@
   (assert dir "No data dir")
   (assert (.exists (io/file dir)) (format "Directory doesn't exist: %s" dir))
   (component/using
-             (new-bidi-routes
-              #(->> % :protection-system make-composite-authorizer
-                    (make-area-api-handlers dir) make-area-api-routes)
+            (new-bidi-routes
+              #(->> %
+                    :protection-system
+                    make-composite-authorizer
+                    (make-area-api-handlers dir)
+                    make-area-api-routes)
               :context context)
              [:protection-system]))
 
