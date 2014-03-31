@@ -204,7 +204,7 @@
   (println "Authorization failure. Redirecting to login.")
   (.. js/window -location (replace "login")))
 
-;; Ajax Error Handler
+;;Ajax Error Handler
 (defn error-handler [response]
   (if (= 401 (:status response))
     (authz-error-handler)
