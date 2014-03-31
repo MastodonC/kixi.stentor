@@ -211,6 +211,13 @@
         (kixi.stentor.geojson/poi-csv->geojson (str data-dir f ".csv")
                                                (str data-dir f ".js")))
      ["cambridge_digitallyexcluded"]))
+
+  (let [data-dir "/home/bld/data/data_stentor/public/poi/"]
+    (map
+     #(let [f %]
+        (kixi.stentor.geojson/poi-csv->geojson (str data-dir f ".csv")
+                                               (str data-dir f ".js")))
+     ["schools_hackney"]))
   
   )
 
