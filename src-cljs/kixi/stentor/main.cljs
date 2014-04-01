@@ -49,113 +49,7 @@
 
     :area-layer-value nil
     :area-layer nil
-    :area-selector [;;
-                    ;; Bexley
-                    {:label "Bexley Percent Unemployed" :value "bexley_employment"}
-                    {:label "Bexley National Insurance Registrations" :value "bexley_nino"}
-                    {:label "Bexley Broadband Speed" :value "bexley_broadband_speed"}
-
-                    ;; Waste
-                    ;; {:label "Bexley Recycled Waste Non-paper" :value "bexley_recycledwastenonpaper"}
-                    ;; {:label "Bexley Recycled Waste Paper" :value "bexley_recycledwastepaper"}
-                    ;; {:label "Bexley Residual Waste" :value "bexley_residualwaste"}
-
-                    ;; Accommodation
-                    {:label "Bexley Percent Over Occupied" :value "bexley_occupancy"}
-                    {:label "Bexley Percent Social Rented" :value "bexley_tenure"}
-
-                    ;; Community
-                    {:label "Bexley Belonging" :value "bexley_belonging"}
-                    {:label "Bexley Community Cohesion" :value "bexley_communitycohesion"}
-                    {:label "Bexley Community Safety" :value "bexley_communitysafety"}
-                    {:label "Bexley Taking Part" :value "bexley_takingpart"}
-
-                    ;; WARM
-                    {:label "Bexley Resilience (WARM)" :value "bexley_resilience"}
-                    {:label "Bexley Wellbeing (WARM)" :value "bexley_wellbeing"}
-
-                    ;; Crime
-                    {:label "Bexley Anti-social Behaviour" :value "bexley_crime_scrub_Anti-social_behaviour"}
-                    {:label "Bexley Burglary" :value "bexley_crime_scrub_Burglary"}
-                    {:label "Bexley Criminal Damage and Arson" :value "bexley_crime_scrub_Criminal_damage_and_arson"}
-                    {:label "Bexley Drugs" :value "bexley_crime_scrub_Drugs"}
-                    {:label "Bexley Other Crime" :value "bexley_crime_scrub_Other_crime"}
-                    {:label "Bexley Other Theft" :value "bexley_crime_scrub_Other_theft"}
-                    {:label "Bexley Robbery" :value "bexley_crime_scrub_Robbery"}
-                    {:label "Bexley Shoplifting" :value "bexley_crime_scrub_Shoplifting"}
-                    {:label "Bexley Vehicle Crime" :value "bexley_crime_scrub_Vehicle_crime"}
-                    {:label "Bexley Total Crime" :value "bexley_crime_scrub_Total_crime"}
-
-                    ;;
-                    ;; Cambridge
-                    {:label "Cambridge Broadband Speed" :value "cambridge_broadband_speed"}
-                    ;; {:label "Cambridge Future Broadband" :value "cambridge_futurebroadband"}
-
-                    {:label "Cambridge Employment" :value "cambridge_employment"}
-                    {:label "Cambridge National Insurance Registrations" :value "cambridge_nino"}
-                    {:label "Cambridge Demographics Library Users" :value "cambridge_demographicslibraryusers"}
-                    {:label "Cambridge Demographics Library Visits" :value "cambridge_demographicslibraryvisits"}
-
-                    ;; Accommodation
-                    {:label "Cambridge Percent Flats (vs Houses)" :value "cambridge_accommodation_type"}
-                    {:label "Cambridge Percent Over Occupied" :value "cambridge_occupancy"}
-                    {:label "Cambridge Percent Social Rented" :value "cambridge_tenure"}
-
-                    ;; Community
-                    {:label "Cambridge Belonging" :value "cambridge_belonging"}
-                    {:label "Cambridge Community Cohesion" :value "cambridge_communitycohesion"}
-                    {:label "Cambridge Community Safety" :value "cambridge_communitysafety"}
-                    {:label "Cambridge Taking Part" :value "cambridge_takingpart"}
-
-                    ;; WARM
-                    {:label "Cambridge Resilience (WARM)" :value "cambridge_resilience"}
-                    {:label "Cambridge Wellbeing (WARM)" :value "cambridge_wellbeing"}
-
-                    ;; Crime
-                    {:label "Cambridge Anti-social Behaviour" :value "cambridge_crime_scrub_Anti-social_behaviour"}
-                    {:label "Cambridge Burglary" :value "cambridge_crime_scrub_Burglary"}
-                    {:label "Cambridge Criminal Damage and Arson" :value "cambridge_crime_scrub_Criminal_damage_and_arson"}
-                    {:label "Cambridge Drugs" :value "cambridge_crime_scrub_Drugs"}
-                    {:label "Cambridge Other Crime" :value "cambridge_crime_scrub_Other_crime"}
-                    {:label "Cambridge Other Theft" :value "cambridge_crime_scrub_Other_theft"}
-                    {:label "Cambridge Robbery" :value "cambridge_crime_scrub_Robbery"}
-                    {:label "Cambridge Shoplifting" :value "cambridge_crime_scrub_Shoplifting"}
-                    {:label "Cambridge Vehicle Crime" :value "cambridge_crime_scrub_Vehicle_crime"}
-                    {:label "Cambridge Total Crime" :value "cambridge_crime_scrub_Total_crime"}
-
-                    ;;
-                    ;; Hackney
-                    {:label "Hackney Broadband Speed" :value "hackney_broadband_speed"}
-                    {:label "Hackney Employment" :value "hackney_employment"}
-                    {:label "Hackney National Insurance Registrations" :value "hackney_nino"}
-
-                    ;; Accommodation
-                    {:label "Hackney Percent Flats (vs Houses)" :value "hackney_accommodation_type"}
-                    {:label "Hackney Percent Social Rented" :value "hackney_tenure"}
-                    {:label "Hackney Percent Over Occupied" :value "hackney_occupancy"}
-
-                    ;; Community
-                    {:label "Hackney Belonging" :value "hackney_belonging"}
-                    {:label "Hackney Community Cohesion" :value "hackney_communitycohesion"}
-                    {:label "Hackney Community Safety" :value "hackney_communitysafety"}
-                    {:label "Hackney Taking Part" :value "hackney_takingpart"}
-
-                    ;; WARM
-                    {:label "Hackney Resilience (WARM)" :value "hackney_resilience"}
-                    {:label "Hackney Wellbeing (WARM)" :value "hackney_wellbeing"}
-
-                    ;; Crime
-                    {:label "Hackney Anti-social Behaviour" :value "hackney_crime_scrub_Anti-social_behaviour"}
-                    {:label "Hackney Burglary" :value "hackney_crime_scrub_Burglary"}
-                    {:label "Hackney Criminal Damage and Arson" :value "hackney_crime_scrub_Criminal_damage_and_arson"}
-                    {:label "Hackney Drugs" :value "hackney_crime_scrub_Drugs"}
-                    {:label "Hackney Other Crime" :value "hackney_crime_scrub_Other_crime"}
-                    {:label "Hackney Other Theft" :value "hackney_crime_scrub_Other_theft"}
-                    {:label "Hackney Robbery" :value "hackney_crime_scrub_Robbery"}
-                    {:label "Hackney Shoplifting" :value "hackney_crime_scrub_Shoplifting"}
-                    {:label "Hackney Vehicle Crime" :value "hackney_crime_scrub_Vehicle_crime"}
-                    {:label "Hackney Total Crime" :value "hackney_crime_scrub_Total_crime"}
-                    ]
+    :area-selector nil
 
     :maps []
 
@@ -315,8 +209,16 @@
          (for [{:keys [label value]} (:poi-selector data)]
            [:option {:value value} label])]]))))
 
+(defn get-area [data]
+  (GET "/data/geojson-area"
+       {:response-format :edn
+        :handler #(om/update! data :area-selector %)
+        :error-handler #(println "Public Area Only: " %)}))
+
 (defn area-component [data owner]
   (reify
+    om/IDidMount
+    (did-mount [this] (get-area data))
     om/IRenderState
     (render-state [this state]
       (html
