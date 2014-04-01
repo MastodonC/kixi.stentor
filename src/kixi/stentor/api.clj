@@ -83,7 +83,7 @@
   :authorized? dummy-authorizer
   :available-media-types ["application/edn"]
   :handle-ok (fn [context]
-               (let [public-poi [{:label "PUBLIC! Hackney Schools Population (Dummy Data)" :value "schools_hackney"}]
+               (let [public-poi [{:label "Hackney Schools Population (Dummy Data)" :value "schools_hackney"}]
                      session (-> context :request cookies-request :cookies (get "session") :value)
                      session-details (session-id->session-details session component)
                      username (:username session-details)
