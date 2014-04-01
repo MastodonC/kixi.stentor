@@ -85,11 +85,10 @@
                (let [public-poi [{:label "PUBLIC! Hackney Schools Population (Dummy Data)" :value "schools_hackney"}]
                      session (-> context :request cookies-request :cookies (get "session") :value)
                      session-details (session-id->session-details session component)
-                     username (:username session-details)]
-                 (println "Session Details:" session-details)
-                 (println "System: " component)
+                     username (:username session-details)
+                     user-poi (-> component :protection-system :password-store :ref deref (get username) :poi)]
                  (if username
-                   [{:label "PRIVATE! Hackney Schools Population (Dummy Data)" :value "schools_hackney"}]
+                   (concat public-poi user-poi)
                    public-poi))))
 
 (defn make-poi-api-handlers [dir component authorizer]
