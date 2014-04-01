@@ -375,6 +375,7 @@
         (om/build postcode-selector-component app-state)
         ;;(om/build map-saver-component app-state)
         ;;(om/build map-loader-component app-state)
+        [:p [:a {:href "/login.html"} "Login"]]
         ]))))
 
 (defn map-component
