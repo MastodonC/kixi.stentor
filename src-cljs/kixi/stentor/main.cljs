@@ -15,6 +15,7 @@
 (ns kixi.stentor.main
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require
+   [cljs.reader :as reader]
    [om.core :as om :include-macros true]
    [clojure.string :as string]
    [sablono.core :as html :refer-macros [html]]
@@ -22,6 +23,7 @@
    [ajax.core :refer (GET PUT ajax-request)]
    [ankha.core :as ankha]
    [kixi.stentor.colorbrewer :as color]
+   [kixi.stentor.history :as hist]
    [goog.events :as events]))
 
 (enable-console-print!)
@@ -482,18 +484,29 @@
 
     om/IRender
     (render [this]
+      (println "Rendering!" (.-hash (.-location js/window)))
       (html [:div#map]))
 
     om/IDidMount
     (did-mount [this]
       (let [node (om/get-node owner)
             {:keys [leaflet-map] :as map} (create-map (:map app-state) node)
-            loc {:lng (get-in app-state [:map :lng])
-                 :lat (get-in app-state [:map :lat])}]
+
+
+            loc (let [hash (.-hash (.-location js/window))]
+                  ;; Take the location from the href
+                  (if (> (.-length hash) 10)
+                    (reader/read-string (goog.string/urlDecode (.substring hash 1)))
+                    ;; Else the initial data
+                    {:lng (get-in app-state [:map :lng])
+                     :lat (get-in app-state [:map :lat])}))]
 
         ;;(.on leaflet-map "click" (fn [ev] (.dir js/console ev)))
         (.on leaflet-map "moveend" (fn [ev]
                                      (let [center (.getCenter leaflet-map)]
+                                       (set! (.-hash (.-location js/window))
+                                             (str "#" (goog.string/urlEncode (pr-str {:lat (.-lat center)
+                                                                                      :lng (.-lng center)}))))
                                        (om/update! app-state [:map :lng] (.-lng center))
                                        (om/update! app-state [:map :lat] (.-lat center)))
                                      ))
@@ -541,9 +554,15 @@
 
         (when-let [layer (:poi-layer app-state)]
           (when (.-_map layer)
-              (.bringToFront layer)))))))
+            (.bringToFront layer)))))))
 
 (om/root map-component app-model {:target (. js/document (getElementById "mappy"))})
 (om/root panel-component app-model {:target (. js/document (getElementById "panel"))})
 
-;; (om/root ankha/inspector app-model {:target (.getElementById js/document "debug")})
+#_(om/root ankha/inspector app-model {:target (.getElementById js/document "debug")})
+
+#_(hist/set-token! "test123")
+#_(hist/set-token! "test143")
+#_(hist/set-token! "test198")
+
+;;(.panTo map (clj->js (zipmap [:lat :lng] (:latlng m))))

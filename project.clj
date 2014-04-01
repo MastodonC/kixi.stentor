@@ -31,7 +31,7 @@
                  [juxt.modular/bidi "0.2.1"]
                  [juxt/modular "0.2.0"]
                  ;; [juxt/modular.cljs-builder "0.1.0-SNAPSHOT"]
-                 [cylon "0.1.0"]
+                 [cylon "0.1.1-SNAPSHOT"]
 
                  ;; AJAX
                  [cljs-ajax "0.2.3"]
