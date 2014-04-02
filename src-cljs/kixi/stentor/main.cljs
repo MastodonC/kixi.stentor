@@ -184,6 +184,14 @@
 (defn update-when [x pred f & args]
   (if pred (apply f x args) x))
 
+(defn bookmark-position [data]
+  (when-let [leaflet-map (:leaflet-map data)]
+    (let [center (.getCenter leaflet-map)]
+      (set! (.-hash (.-location js/window))
+            (str "#" (goog.string/urlEncode
+                                  (pr-str {:lat (.-lat center)
+                                           :lng (.-lng center)})))))))
+
 (defn ajax [{:keys [in out]} content-type]
   (go-loop []
     (when-let [url (<! in)]
@@ -503,10 +511,15 @@
 
         ;;(.on leaflet-map "click" (fn [ev] (.dir js/console ev)))
         (.on leaflet-map "moveend" (fn [ev]
+
+                                     ;; how to get data?
+
+
                                      (let [center (.getCenter leaflet-map)]
                                        (set! (.-hash (.-location js/window))
                                              (str "#" (goog.string/urlEncode (pr-str {:lat (.-lat center)
                                                                                       :lng (.-lng center)}))))
+                                       ;; TODO Delete these and test - not sure we're still using them
                                        (om/update! app-state [:map :lng] (.-lng center))
                                        (om/update! app-state [:map :lat] (.-lat center)))
                                      ))
