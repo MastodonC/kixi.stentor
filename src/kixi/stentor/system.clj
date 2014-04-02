@@ -35,7 +35,7 @@
 
    [kixi.stentor.database :refer (Database)]
 
-   [cylon.core :refer (new-default-protection-system add-user!)]
+   [cylon.core :refer (new-default-protection-system add-user! new-login-form)]
 
    ;; Accessing the API as a client
    [org.httpkit.client :refer (request) :rename {request http-request}]
@@ -205,7 +205,8 @@
          (new-default-protection-system
           :password-file (io/file dbdir "passwords.edn")
           ;; 1 hour time out by default
-          :session-timeout-in-seconds (* 60 60))
+          :session-timeout-in-seconds (* 60 60)
+          :boilerplate (fn [redirect-uri] (slurp (clojure.java.io/resource "./login.html"))))
 
          :main-routes (new-main-routes "")
 
