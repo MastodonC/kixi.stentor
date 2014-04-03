@@ -16,6 +16,7 @@
 
 ;; This will eventually hit Cassandra or similar
 (defn get-features [location-code-key feature-codes]
+  (println (format "Looking for %s keys in %s" (count feature-codes) (location-code-key geo-json-files)))
   (let [geojson (with-open [rdr (io/reader (location-code-key geo-json-files))]
                   (json/parse-stream rdr keyword))]
     (filter #(feature-codes (get-in % [:properties location-code-key])) (:features geojson))))
@@ -30,6 +31,7 @@
   "Pass in a csv seq and a geojson map and get back an enriched and
   filtered geojson back."
   [csv-file-name out-name]
+  (println (format "IN: %s OUT: %s" csv-file-name out-name))
   (let [data              (csv/read-csv (slurp csv-file-name))
         header            (first data)
         location-code-key (->location-code-key (first header))
@@ -41,12 +43,43 @@
                                  (Double/parseDouble (second (get data-lookup (get-in % [:properties location-code-key])))))
                                features)]
     (with-open [out (io/writer out-name)]
-      (println (format "IN: %s OUT: %s" csv-file-name out-name))
       (json/generate-stream
        {:type "FeatureCollection"
         :features enriched-features
         :header header}
        out))))
+
+(comment
+
+  (let [data-dir "/home/bld/data/data_stentor/public/choropleth/"]
+    (doseq [file (for [city      ["southwark"
+                                  ;; "stoke" "staffs" "worcs"
+                                  ]
+                       file-type ["_accommodation_type"
+                                  "_belonging"
+                                  "_communitycohesion"
+                                  "_communitysafety"
+                                  "_crime_scrub_Anti-social_behaviour"
+                                  "_crime_scrub_Burglary"
+                                  "_crime_scrub_Criminal_damage_and_arson"
+                                  "_crime_scrub_Drugs"
+                                  "_crime_scrub_Other_crime"
+                                  "_crime_scrub_Other_theft"
+                                  "_crime_scrub_Robbery"
+                                  "_crime_scrub_Shoplifting"
+                                  "_crime_scrub_Total_crime"
+                                  "_crime_scrub_Vehicle_crime"
+                                  "_employment"
+                                  "_nino"
+                                  "_occupancy"
+                                  "_resilience"
+                                  "_takingpart"
+                                  "_tenure"]]
+                   (str city file-type))]
+      (kixi.stentor.geojson/csv->geojson (str data-dir file ".csv")
+                                         (str data-dir file ".js"))))
+  )
+
 
 (defn poi-csv->geojson [csv-file-name out-name]
   (let [data     (csv/read-csv (slurp csv-file-name))
@@ -124,7 +157,7 @@
       "hackney_broadband_speed"
       "hackney_communitycohesion"
       "hackney_communitysafety"
-      ; "hackney_crime"
+      ;; "hackney_crime"
       "hackney_crime_scrub_Anti-social_behaviour"
       "hackney_crime_scrub_Burglary"
       "hackney_crime_scrub_Criminal_damage_and_arson"
