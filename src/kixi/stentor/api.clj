@@ -121,7 +121,7 @@
   [;; Southwark
    {:label "Southwark Percent Unemployed" :value "southwark_employment"}
    {:label "Southwark National Insurance Registrations" :value "southwark_nino"}
-   {:label "Southwark Broadband Speed" :value "southwark_broadband_speed"}                    
+;;   {:label "Southwark Broadband Speed" :value "southwark_broadband_speed"}                    
 
    ;; Accommodation
    {:label "Southwark Percent Over Occupied" :value "southwark_occupancy"}
@@ -135,7 +135,7 @@
 
    ;; WARM
    {:label "Southwark Resilience (WARM)" :value "southwark_resilience"}
-   {:label "Southwark Wellbeing (WARM)" :value "southwark_wellbeing"}
+;;   {:label "Southwark Wellbeing (WARM)" :value "southwark_wellbeing"}
 
    ;; Crime
    {:label "Southwark Anti-social Behaviour" :value "southwark_crime_scrub_Anti-social_behaviour"}
@@ -152,21 +152,21 @@
    ;; Staffordshire
    {:label "Staffordshire Percent Unemployed" :value "staffs_employment"}
    {:label "Staffordshire National Insurance Registrations" :value "staffs_nino"}
-   {:label "Staffordshire Broadband Speed" :value "staffs_broadband_speed"}                    
+;;   {:label "Staffordshire Broadband Speed" :value "staffs_broadband_speed"}                    
 
    ;; Accommodation
    {:label "Staffordshire Percent Over Occupied" :value "staffs_occupancy"}
    {:label "Staffordshire Percent Social Rented" :value "staffs_tenure"}
 
    ;; Community
-   {:label "Staffordshire Belonging" :value "staffs_belonging"}
+;;   {:label "Staffordshire Belonging" :value "staffs_belonging"}
    {:label "Staffordshire Community Cohesion" :value "staffs_communitycohesion"}
    {:label "Staffordshire Community Safety" :value "staffs_communitysafety"}
    {:label "Staffordshire Taking Part" :value "staffs_takingpart"}
 
    ;; WARM
-   {:label "Staffordshire Resilience (WARM)" :value "staffs_resilience"}
-   {:label "Staffordshire Wellbeing (WARM)" :value "staffs_wellbeing"}
+   ;;{:label "Staffordshire Resilience (WARM)" :value "staffs_resilience"}
+   ;;{:label "Staffordshire Wellbeing (WARM)" :value "staffs_wellbeing"}
 
    ;; Crime
    {:label "Staffordshire Anti-social Behaviour" :value "staffs_crime_scrub_Anti-social_behaviour"}
@@ -183,21 +183,21 @@
    ;; Stoke on Trent
    {:label "Stoke on Trent Percent Unemployed" :value "stoke_employment"}
    {:label "Stoke on Trent National Insurance Registrations" :value "stoke_nino"}
-   {:label "Stoke on Trent Broadband Speed" :value "stoke_broadband_speed"}                    
+;;   {:label "Stoke on Trent Broadband Speed" :value "stoke_broadband_speed"}                    
 
    ;; Accommodation
    {:label "Stoke on Trent Percent Over Occupied" :value "stoke_occupancy"}
    {:label "Stoke on Trent Percent Social Rented" :value "stoke_tenure"}
 
    ;; Community
-   {:label "Stoke on Trent Belonging" :value "stoke_belonging"}
+;;   {:label "Stoke on Trent Belonging" :value "stoke_belonging"}
    {:label "Stoke on Trent Community Cohesion" :value "stoke_communitycohesion"}
    {:label "Stoke on Trent Community Safety" :value "stoke_communitysafety"}
    {:label "Stoke on Trent Taking Part" :value "stoke_takingpart"}
 
    ;; WARM
-   {:label "Stoke on Trent Resilience (WARM)" :value "stoke_resilience"}
-   {:label "Stoke on Trent Wellbeing (WARM)" :value "stoke_wellbeing"}
+;;   {:label "Stoke on Trent Resilience (WARM)" :value "stoke_resilience"}
+;;   {:label "Stoke on Trent Wellbeing (WARM)" :value "stoke_wellbeing"}
 
    ;; Crime
    {:label "Stoke on Trent Anti-social Behaviour" :value "stoke_crime_scrub_Anti-social_behaviour"}
@@ -215,21 +215,21 @@
    ;; Worcestershire
    {:label "Worcestershire Percent Unemployed" :value "worcs_employment"}
    {:label "Worcestershire National Insurance Registrations" :value "worcs_nino"}
-   {:label "Worcestershire Broadband Speed" :value "worcs_broadband_speed"}                    
+;;   {:label "Worcestershire Broadband Speed" :value "worcs_broadband_speed"}                    
 
    ;; Accommodation
    {:label "Worcestershire Percent Over Occupied" :value "worcs_occupancy"}
    {:label "Worcestershire Percent Social Rented" :value "worcs_tenure"}
 
    ;; Community
-   {:label "Worcestershire Belonging" :value "worcs_belonging"}
+;;   {:label "Worcestershire Belonging" :value "worcs_belonging"}
    {:label "Worcestershire Community Cohesion" :value "worcs_communitycohesion"}
    {:label "Worcestershire Community Safety" :value "worcs_communitysafety"}
    {:label "Worcestershire Taking Part" :value "worcs_takingpart"}
 
    ;; WARM
-   {:label "Worcestershire Resilience (WARM)" :value "worcs_resilience"}
-   {:label "Worcestershire Wellbeing (WARM)" :value "worcs_wellbeing"}
+;;   {:label "Worcestershire Resilience (WARM)" :value "worcs_resilience"}
+;;   {:label "Worcestershire Wellbeing (WARM)" :value "worcs_wellbeing"}
 
    ;; Crime
    {:label "Worcestershire Anti-social Behaviour" :value "worcs_crime_scrub_Anti-social_behaviour"}
