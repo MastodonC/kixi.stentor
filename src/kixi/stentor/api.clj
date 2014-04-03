@@ -118,7 +118,133 @@
 ;; Areas
 ;; FIXME This should come from an EDN file or other database
 (defn public-area []
-  [;; Bexley
+  [;; Southwark
+   {:label "Southwark Percent Unemployed" :value "southwark_employment"}
+   {:label "Southwark National Insurance Registrations" :value "southwark_nino"}
+   {:label "Southwark Broadband Speed" :value "southwark_broadband_speed"}                    
+
+   ;; Accommodation
+   {:label "Southwark Percent Over Occupied" :value "southwark_occupancy"}
+   {:label "Southwark Percent Social Rented" :value "southwark_tenure"}
+
+   ;; Community
+   {:label "Southwark Belonging" :value "southwark_belonging"}
+   {:label "Southwark Community Cohesion" :value "southwark_communitycohesion"}
+   {:label "Southwark Community Safety" :value "southwark_communitysafety"}
+   {:label "Southwark Taking Part" :value "southwark_takingpart"}
+
+   ;; WARM
+   {:label "Southwark Resilience (WARM)" :value "southwark_resilience"}
+   {:label "Southwark Wellbeing (WARM)" :value "southwark_wellbeing"}
+
+   ;; Crime
+   {:label "Southwark Anti-social Behaviour" :value "southwark_crime_scrub_Anti-social_behaviour"}
+   {:label "Southwark Burglary" :value "southwark_crime_scrub_Burglary"}
+   {:label "Southwark Criminal Damage and Arson" :value "southwark_crime_scrub_Criminal_damage_and_arson"}
+   {:label "Southwark Drugs" :value "southwark_crime_scrub_Drugs"}
+   {:label "Southwark Other Crime" :value "southwark_crime_scrub_Other_crime"}
+   {:label "Southwark Other Theft" :value "southwark_crime_scrub_Other_theft"}
+   {:label "Southwark Robbery" :value "southwark_crime_scrub_Robbery"}
+   {:label "Southwark Shoplifting" :value "southwark_crime_scrub_Shoplifting"}
+   {:label "Southwark Vehicle Crime" :value "southwark_crime_scrub_Vehicle_crime"}
+   {:label "Southwark Total Crime" :value "southwark_crime_scrub_Total_crime"}
+
+   ;; Staffordshire
+   {:label "Staffordshire Percent Unemployed" :value "staffs_employment"}
+   {:label "Staffordshire National Insurance Registrations" :value "staffs_nino"}
+   {:label "Staffordshire Broadband Speed" :value "staffs_broadband_speed"}                    
+
+   ;; Accommodation
+   {:label "Staffordshire Percent Over Occupied" :value "staffs_occupancy"}
+   {:label "Staffordshire Percent Social Rented" :value "staffs_tenure"}
+
+   ;; Community
+   {:label "Staffordshire Belonging" :value "staffs_belonging"}
+   {:label "Staffordshire Community Cohesion" :value "staffs_communitycohesion"}
+   {:label "Staffordshire Community Safety" :value "staffs_communitysafety"}
+   {:label "Staffordshire Taking Part" :value "staffs_takingpart"}
+
+   ;; WARM
+   {:label "Staffordshire Resilience (WARM)" :value "staffs_resilience"}
+   {:label "Staffordshire Wellbeing (WARM)" :value "staffs_wellbeing"}
+
+   ;; Crime
+   {:label "Staffordshire Anti-social Behaviour" :value "staffs_crime_scrub_Anti-social_behaviour"}
+   {:label "Staffordshire Burglary" :value "staffs_crime_scrub_Burglary"}
+   {:label "Staffordshire Criminal Damage and Arson" :value "staffs_crime_scrub_Criminal_damage_and_arson"}
+   {:label "Staffordshire Drugs" :value "staffs_crime_scrub_Drugs"}
+   {:label "Staffordshire Other Crime" :value "staffs_crime_scrub_Other_crime"}
+   {:label "Staffordshire Other Theft" :value "staffs_crime_scrub_Other_theft"}
+   {:label "Staffordshire Robbery" :value "staffs_crime_scrub_Robbery"}
+   {:label "Staffordshire Shoplifting" :value "staffs_crime_scrub_Shoplifting"}
+   {:label "Staffordshire Vehicle Crime" :value "staffs_crime_scrub_Vehicle_crime"}
+   {:label "Staffordshire Total Crime" :value "staffs_crime_scrub_Total_crime"}
+
+   ;; Stoke on Trent
+   {:label "Stoke on Trent Percent Unemployed" :value "stoke_employment"}
+   {:label "Stoke on Trent National Insurance Registrations" :value "stoke_nino"}
+   {:label "Stoke on Trent Broadband Speed" :value "stoke_broadband_speed"}                    
+
+   ;; Accommodation
+   {:label "Stoke on Trent Percent Over Occupied" :value "stoke_occupancy"}
+   {:label "Stoke on Trent Percent Social Rented" :value "stoke_tenure"}
+
+   ;; Community
+   {:label "Stoke on Trent Belonging" :value "stoke_belonging"}
+   {:label "Stoke on Trent Community Cohesion" :value "stoke_communitycohesion"}
+   {:label "Stoke on Trent Community Safety" :value "stoke_communitysafety"}
+   {:label "Stoke on Trent Taking Part" :value "stoke_takingpart"}
+
+   ;; WARM
+   {:label "Stoke on Trent Resilience (WARM)" :value "stoke_resilience"}
+   {:label "Stoke on Trent Wellbeing (WARM)" :value "stoke_wellbeing"}
+
+   ;; Crime
+   {:label "Stoke on Trent Anti-social Behaviour" :value "stoke_crime_scrub_Anti-social_behaviour"}
+   {:label "Stoke on Trent Burglary" :value "stoke_crime_scrub_Burglary"}
+   {:label "Stoke on Trent Criminal Damage and Arson" :value "stoke_crime_scrub_Criminal_damage_and_arson"}
+   {:label "Stoke on Trent Drugs" :value "stoke_crime_scrub_Drugs"}
+   {:label "Stoke on Trent Other Crime" :value "stoke_crime_scrub_Other_crime"}
+   {:label "Stoke on Trent Other Theft" :value "stoke_crime_scrub_Other_theft"}
+   {:label "Stoke on Trent Robbery" :value "stoke_crime_scrub_Robbery"}
+   {:label "Stoke on Trent Shoplifting" :value "stoke_crime_scrub_Shoplifting"}
+   {:label "Stoke on Trent Vehicle Crime" :value "stoke_crime_scrub_Vehicle_crime"}
+   {:label "Stoke on Trent Total Crime" :value "stoke_crime_scrub_Total_crime"}
+
+
+   ;; Worcestershire
+   {:label "Worcestershire Percent Unemployed" :value "worcs_employment"}
+   {:label "Worcestershire National Insurance Registrations" :value "worcs_nino"}
+   {:label "Worcestershire Broadband Speed" :value "worcs_broadband_speed"}                    
+
+   ;; Accommodation
+   {:label "Worcestershire Percent Over Occupied" :value "worcs_occupancy"}
+   {:label "Worcestershire Percent Social Rented" :value "worcs_tenure"}
+
+   ;; Community
+   {:label "Worcestershire Belonging" :value "worcs_belonging"}
+   {:label "Worcestershire Community Cohesion" :value "worcs_communitycohesion"}
+   {:label "Worcestershire Community Safety" :value "worcs_communitysafety"}
+   {:label "Worcestershire Taking Part" :value "worcs_takingpart"}
+
+   ;; WARM
+   {:label "Worcestershire Resilience (WARM)" :value "worcs_resilience"}
+   {:label "Worcestershire Wellbeing (WARM)" :value "worcs_wellbeing"}
+
+   ;; Crime
+   {:label "Worcestershire Anti-social Behaviour" :value "worcs_crime_scrub_Anti-social_behaviour"}
+   {:label "Worcestershire Burglary" :value "worcs_crime_scrub_Burglary"}
+   {:label "Worcestershire Criminal Damage and Arson" :value "worcs_crime_scrub_Criminal_damage_and_arson"}
+   {:label "Worcestershire Drugs" :value "worcs_crime_scrub_Drugs"}
+   {:label "Worcestershire Other Crime" :value "worcs_crime_scrub_Other_crime"}
+   {:label "Worcestershire Other Theft" :value "worcs_crime_scrub_Other_theft"}
+   {:label "Worcestershire Robbery" :value "worcs_crime_scrub_Robbery"}
+   {:label "Worcestershire Shoplifting" :value "worcs_crime_scrub_Shoplifting"}
+   {:label "Worcestershire Vehicle Crime" :value "worcs_crime_scrub_Vehicle_crime"}
+   {:label "Worcestershire Total Crime" :value "worcs_crime_scrub_Total_crime"}
+
+
+   ;; Bexley
    {:label "Bexley Percent Unemployed" :value "bexley_employment"}
    {:label "Bexley National Insurance Registrations" :value "bexley_nino"}
    {:label "Bexley Broadband Speed" :value "bexley_broadband_speed"}                    
