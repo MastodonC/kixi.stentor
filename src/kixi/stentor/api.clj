@@ -118,7 +118,39 @@
 ;; Areas
 ;; FIXME This should come from an EDN file or other database
 (defn public-area []
-  [;; Southwark
+  [ ;; Camden
+   {:label "Camden Percent Unemployed" :value "camden_employment"}
+   {:label "Camden National Insurance Registrations" :value "camden_nino"}
+   ;;   {:label "Camden Broadband Speed" :value "camden_broadband_speed"}                    
+
+   ;; Accommodation
+   {:label "Camden Percent Over Occupied" :value "camden_occupancy"}
+   {:label "Camden Percent Social Rented" :value "camden_tenure"}
+
+   ;; Community
+   {:label "Camden Belonging" :value "camden_belonging"}
+   {:label "Camden Community Cohesion" :value "camden_communitycohesion"}
+   {:label "Camden Community Safety" :value "camden_communitysafety"}
+   {:label "Camden Taking Part" :value "camden_takingpart"}
+
+   ;; WARM
+   {:label "Camden Resilience (WARM)" :value "camden_resilience"}
+   ;;   {:label "Camden Wellbeing (WARM)" :value "camden_wellbeing"}
+
+   ;; Crime
+   {:label "Camden Anti-social Behaviour" :value "camden_crime_scrub_Anti-social_behaviour"}
+   {:label "Camden Burglary" :value "camden_crime_scrub_Burglary"}
+   {:label "Camden Criminal Damage and Arson" :value "camden_crime_scrub_Criminal_damage_and_arson"}
+   {:label "Camden Drugs" :value "camden_crime_scrub_Drugs"}
+   {:label "Camden Other Crime" :value "camden_crime_scrub_Other_crime"}
+   {:label "Camden Other Theft" :value "camden_crime_scrub_Other_theft"}
+   {:label "Camden Robbery" :value "camden_crime_scrub_Robbery"}
+   {:label "Camden Shoplifting" :value "camden_crime_scrub_Shoplifting"}
+   {:label "Camden Vehicle Crime" :value "camden_crime_scrub_Vehicle_crime"}
+   {:label "Camden Total Crime" :value "camden_crime_scrub_Total_crime"}
+
+   
+   ;; Southwark
    {:label "Southwark Percent Unemployed" :value "southwark_employment"}
    {:label "Southwark National Insurance Registrations" :value "southwark_nino"}
 ;;   {:label "Southwark Broadband Speed" :value "southwark_broadband_speed"}                    
