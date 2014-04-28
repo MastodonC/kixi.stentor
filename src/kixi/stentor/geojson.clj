@@ -51,8 +51,10 @@
 
 (comment
 
-  (let [data-dir "/home/bld/data/data_stentor/public/choropleth/"]
-    (doseq [file (for [city      ["southwark"
+  (let [data-dir ;;"/home/bld/data/data_stentor/public/choropleth/"
+        "/home/bld/wip/stentor/tmp/public/choropleth/"]
+    (doseq [file (for [city      ["camden"
+                                  ;; "southwark"
                                   ;; "stoke" "staffs" "worcs"
                                   ]
                        file-type ["_accommodation_type"
