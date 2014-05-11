@@ -58,7 +58,8 @@
 
     }))
 
-(def tile-url "http://{s}.tile.cloudmade.com/84b48bab1db44fb0a70c83bfc087b616/997/256/{z}/{x}/{y}.png")
+;;(def tile-url "http://{s}.tile.cloudmade.com/84b48bab1db44fb0a70c83bfc087b616/997/256/{z}/{x}/{y}.png")
+(def tile-url "http://a.tile.openstreetmap.org/{z}/{x}/{y}.png")
 
 (defn create-map
   [cursor id]
