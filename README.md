@@ -21,14 +21,17 @@ Your `$HOME/.stentor.edn` file should contain something like the following :-
  :database {:keyspace "test"}
 
  :web-server {:port 8010}
+ 
+ :dbdir "/home/user/stentor-data/file-db"
 
  :data-dir
- {:poi "/home/malcolm/src/stentor-data/drugs"
-  :area "/home/malcolm/src/stentor-data/choropleth"
+ {:poi "/home/user/stentor-data/drugs"
+  :area "/home/user/stentor-data/choropleth"
   }
 
  }
 ```
+(:dbdir points to the location of .edn database files - make sure you copy them there)
 
 ## License
 
