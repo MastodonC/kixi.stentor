@@ -51,6 +51,11 @@
     :area-layer nil
     :area-selector nil
 
+    :legend {:poi {:title "POI Legend"
+                   :data []}
+             :area {:title "Area Legend"
+                    :data []}}
+
     :maps []
 
     :leaflet-map nil                    ; authoritative
@@ -108,11 +113,22 @@
     (authz-error-handler response)
     (println (str "Error: " status " " status-text))))
 
+(defn update-legend [data buckets component-key scheme]
+  (let [colors (color/colors scheme (count buckets))]
+    (om/update! data [:legend component-key :data] (vec (map-indexed 
+                                                         (fn [idx item] 
+                                                           (hash-map :color item
+                                                                     :min (get-in buckets [idx]) 
+                                                                     :max (get-in buckets [(+ idx 1)])))
+                                                         colors)))))
+
+
 (defn update-poi [data value]
   (if-not value
     (do
       (om/update! data :poi-layer-value nil)
-      (om/update! data :poi-layer-to-remove (:poi-layer @data)))
+      (om/update! data :poi-layer-to-remove (:poi-layer @data))
+      (om/update! data [:legend :poi :data] []))
     ;; TODO don't use json GETs!! see
     ;; https://github.com/yogthos/cljs-ajax using
     ;; ajax-request instead of GET because Julian says
@@ -120,6 +136,8 @@
     ;; https://github.com/yogthos/cljs-ajax/issues/38
     (GET (str  "/data/geojson-poi/" value)
         {:handler (fn [body]
+                    (let [buckets (get-in body ["buckets"])]
+                      (update-legend data buckets :poi :Blues))
                     (let [json (clj->js body)
                           layer (-> js/L (.geoJson
                                           json
@@ -151,11 +169,13 @@
          :error-handler #(error-handler %)
          :response-format :json})))
 
+
 (defn update-area [data value]
   (if-not value
     (do
       (om/update! data :area-layer-value nil)
-      (om/update! data :area-layer-to-remove (:area-layer @data)))
+      (om/update! data :area-layer-to-remove (:area-layer @data))
+      (om/update! data [:legend :area :data] []))
     ;; TODO don't use json GETs!! see
     ;; https://github.com/yogthos/cljs-ajax using
     ;; ajax-request instead of GET because Julian says
@@ -163,13 +183,14 @@
     ;; https://github.com/yogthos/cljs-ajax/issues/38
     (GET (str  "/data/geojson-area/" value)
          {:handler (fn [body]
+                     (let [buckets (get-in body ["buckets"])]
+                       (update-legend data buckets :area :YlGn))
                      (let [json (clj->js body)
                            layer (-> js/L (.geoJson
                                            json
                                            #js {:style
                                                 (fn [feature]
-                                                  #js {:fillColor
-                                                       (color/brewer :YlGn 7 (.. feature -properties -bucket))
+                                                  #js {:fillColor (color/brewer :YlGn 7 (.. feature -properties -bucket))
                                                        :weight 1
                                                        :color "#eee"
                                                        :fillOpacity 0.8}
@@ -225,7 +246,8 @@
       (html
        [:section
         [:h2 "Areas"]
-        [:select {:onChange (fn [e] (let [val (let [v (.-value (.-target e))] (if (= v "None") nil v))]
+        [:select {:onChange (fn [e] (let [val (let [v (.-value (.-target e))] (if (= v "None") nil v))
+                                          name (.-name (.-target e))]
                                       (update-area data val)))
                   :value (:area-layer-value data)}
          [:option "None"]
@@ -291,6 +313,30 @@
          {:onClick (fn [_]
                      (pan-to-postcode data owner))}
          "Go"]]))))
+
+;; TODO improve rounding. integers should remain integers.
+(defn- round-up [x]
+  (.toFixed x 3))
+
+(defn legend-component [data owner]
+  (om/component
+   (let [labels (-> data :data)
+         title  (-> data :title)]
+     (html
+      [:section
+       [:div
+        [:h2 title]]
+       [:div {:class "my-legend"}
+        [:ul
+         (if-not (empty? labels)
+           (for [l labels]
+             (let [min (round-up (:min l))
+                   max (when-let [m (:max l)] (round-up m))
+                   label (if-not (nil? max) (str min " - " max) (str min " >"))]
+               [:li [:span {:class "my-legend-icon"
+                            :style {:background (:color l)}}]
+                [:span {:class "my-legend-label"} label]]))
+           (repeat 9 [:li [:span {:class "my-legend-icon" :style {:border 0}}]]))]]]))))
 
 (defn get-maps [data]
   (GET "/maps"
@@ -361,6 +407,11 @@
                               (.preventDefault e))}
                (:map m)]])]))))
 
+(defn login-component [data owner]
+  (om/component
+   (html
+    [:p [:a {:href "/login"} "Login"]])))
+
 (defn panel-component
   [app-state owner]
   (reify
@@ -374,9 +425,14 @@
         (om/build area-component app-state)
         (om/build area-info-component app-state)
         (om/build postcode-selector-component app-state)
+        [:div {:style {:float "left" :width "50%"}}
+         (om/build legend-component (:area (:legend app-state)))]
+        [:div {:style {:float "left" :width "50%"}}
+         (om/build legend-component (:poi (:legend app-state)))]
+        (om/build login-component app-state)
         ;;(om/build map-saver-component app-state)
         ;;(om/build map-loader-component app-state)
-        [:p [:a {:href "/login"} "Login"]]
+       
         ]))))
 
 (defn map-component

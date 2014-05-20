@@ -234,3 +234,28 @@ path.selected {
     margin: 3px;
     font-size: 70%;
 }
+
+.my-legend ul {
+    list-style: none;
+    margin: 0;
+    margin-bottom: 5px;
+    padding: 0;
+}
+    
+.my-legend-label {
+    font-size: 80%;
+    border: 0;
+    list-style: none;
+    margin-left: 0;
+    line-height: 16px;
+    margin-bottom: 2px;
+}
+    
+.my-legend-icon {
+    display: inline-block;
+    height: 18px;
+    margin-right: 5px;
+    margin-left: 0;
+    width: 15%;
+    border: 1px solid #999;
+}

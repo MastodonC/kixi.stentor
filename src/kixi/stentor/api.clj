@@ -48,12 +48,12 @@
     {:type "FeatureCollection"
      :min min-val
      :max max-val
+     :buckets (vec (range min-val max-val (/ (- max-val min-val) steps)))
      :features
      (mapv (fn [feature]
-             (update-in feature [:properties]
-                        assoc :bucket
-                        (bucket (get-in feature [:properties :v])
-                                min-val max-val steps)))
+             (-> feature
+                 (update-in [:properties] assoc :bucket (bucket (get-in feature [:properties :v])
+                                    min-val max-val steps))))
            features)}))
 
 ;; FIXME Evil hack to get session details
