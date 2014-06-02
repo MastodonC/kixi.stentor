@@ -118,7 +118,38 @@
 ;; Areas
 ;; FIXME This should come from an EDN file or other database
 (defn public-area []
-  [ ;; Camden
+  [;; Sutton
+   {:label "Sutton Percent Unemployed" :value "sutton_employment"}
+   {:label "Sutton National Insurance Registrations" :value "sutton_nino"}
+   ;;   {:label "Sutton Broadband Speed" :value "sutton_broadband_speed"}                    
+
+   ;; Accommodation
+   {:label "Sutton Percent Over Occupied" :value "sutton_occupancy"}
+   {:label "Sutton Percent Social Rented" :value "sutton_tenure"}
+
+   ;; Community
+   {:label "Sutton Belonging" :value "sutton_belonging"}
+   {:label "Sutton Community Cohesion" :value "sutton_communitycohesion"}
+   {:label "Sutton Community Safety" :value "sutton_communitysafety"}
+   {:label "Sutton Taking Part" :value "sutton_takingpart"}
+
+   ;; WARM
+   {:label "Sutton Resilience (WARM)" :value "sutton_resilience"}
+   ;;   {:label "Sutton Wellbeing (WARM)" :value "sutton_wellbeing"}
+
+   ;; Crime
+   {:label "Sutton Anti-social Behaviour" :value "sutton_crime_scrub_Anti-social_behaviour"}
+   {:label "Sutton Burglary" :value "sutton_crime_scrub_Burglary"}
+   {:label "Sutton Criminal Damage and Arson" :value "sutton_crime_scrub_Criminal_damage_and_arson"}
+   {:label "Sutton Drugs" :value "sutton_crime_scrub_Drugs"}
+   {:label "Sutton Other Crime" :value "sutton_crime_scrub_Other_crime"}
+   {:label "Sutton Other Theft" :value "sutton_crime_scrub_Other_theft"}
+   {:label "Sutton Robbery" :value "sutton_crime_scrub_Robbery"}
+   {:label "Sutton Shoplifting" :value "sutton_crime_scrub_Shoplifting"}
+   {:label "Sutton Vehicle Crime" :value "sutton_crime_scrub_Vehicle_crime"}
+   {:label "Sutton Total Crime" :value "sutton_crime_scrub_Total_crime"}
+
+   ;; Camden
    {:label "Camden Percent Unemployed" :value "camden_employment"}
    {:label "Camden National Insurance Registrations" :value "camden_nino"}
    ;;   {:label "Camden Broadband Speed" :value "camden_broadband_speed"}                    

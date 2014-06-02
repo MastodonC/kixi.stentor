@@ -53,7 +53,8 @@
 
   (let [data-dir ;;"/home/bld/data/data_stentor/public/choropleth/"
         "/home/bld/wip/stentor/tmp/public/choropleth/"]
-    (doseq [file (for [city      ["camden"
+    (doseq [file (for [city      ["sutton"
+                                  ;; "camden"
                                   ;; "southwark"
                                   ;; "stoke" "staffs" "worcs"
                                   ]
